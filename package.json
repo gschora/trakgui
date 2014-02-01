@@ -1,0 +1,14 @@
+{
+    "name": "trakgui",
+    "main": "index.html",
+    "window": {
+        "width": 1024,
+        "height": 600,
+        "min_width": 1024,
+        "min_height": 600,
+        "max_width": 1024,
+        "max_height": 600,
+        "toolbar": true,
+        "frame": true
+    }
+}
