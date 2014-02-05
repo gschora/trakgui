@@ -100,7 +100,7 @@ body {
 article{margin-bottom: 1000px;} /* Blank Space Between The Articles */
 
 /* Typography */
-h1 { font-size: 50px; }
+h1 { font-size: 25px; }
 h2 { font-size: 45px; }
 h3 { font-size: 40px; }
 h4 { font-size: 35px; }
@@ -242,7 +242,8 @@ ul#settings {
     margin: 0px;
     padding: 0px;
     top: 10px;
-    left: 0px;
+    /*left: 0px;*/
+    left: 930px;
     list-style: none;
     z-index:9998;
 }
@@ -278,7 +279,7 @@ ul#settings .startRtklib a{
 }
 
 div#map{
-	height: 700px;
+	height: 500px;
 	width: 978px;
 	margin-left: 0px;
 	z-index: 9997;
