@@ -8,3 +8,4 @@ nw.pak
 nwsnapshot.exe
 *.sublime-workspace
 stuff/
+tools/rtklib/

@@ -1,8 +1,9 @@
+var gui = require('nw.gui');
 /**
  * starts all functions in die file
  * @return nothing
  */
-(function (){
+(function() {
     autoReloadPage();
     setupMenu();
 })();
@@ -12,6 +13,7 @@
  * auto reloads page in node-webkit everytime something is changed
  * @return nothing
  */
+
 function autoReloadPage() {
     var fs = require('fs');
 
@@ -25,9 +27,10 @@ function autoReloadPage() {
  * sets up native Menu in node-webkit
  * @return nothing
  */
+
 function setupMenu() {
     // Load native UI library
-    var gui = require('nw.gui');
+
 
     // Create an empty menu
     var menu = new gui.Menu({
