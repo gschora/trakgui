@@ -6,7 +6,15 @@ var gui = require('nw.gui');
 (function() {
     autoReloadPage();
     setupMenu();
+    setupCfg();
 })();
+
+function setupCfg() {
+    // console.log('setup_cfg');
+    global.cfgRtklibPath = 'tools\\rtklib\\rtknavi_mkl.exe';
+    global.cfgRtklibPort = 8000;
+    global.cfgRtklibArgs = [];
+}
 
 
 /**

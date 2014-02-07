@@ -1,72 +1,87 @@
-var pathRtklib = 'tools\\rtklib\\rtknavi_mkl.exe';
-var portRtklib = 8000;
-var rtklibRunning = false;
+var net = require('net');
 var rtklibConnect = false;
-// var rtklibChild = globalrtklibChild;
-
+var chkRtklibClient;
 
 checkRtklib();
 setStartStopBtnRtklib();
+setRtklibIconColor();
 
 /**
  * checks if rtklib is running and tcp-server is started
  * @return nothing
  */
+
 function checkRtklib() {
-    setRtklibIconColor();
-    var net = require('net');
-    var client = net.connect({
-            port: portRtklib
+    // setRtklibIconColor();
+    chkRtklibClient = net.connect({
+            port: global.cfgRtklibPort
         },
         function() { //'connect' listener
-            // rtklibRunning = true;
-            setRtklibIconColor();
-            // console.log('rtklib connected');
+            if (global.cfgDebug) {
+                try {
+                    console.log('rtklib connected');
+                } catch (e) {}
+            }
+
         });
-    client.on('data', function(data) {
+    chkRtklibClient.on('data', function(data) {
         rtklibConnect = true;
-        setRtklibIconColor();
-        client.end();
+        // setRtklibIconColor();
+        chkRtklibClient.end();
     });
-    client.on('end', function() {
-        try {
-            console.log('rtklib disconnected');
-        } catch (e) {}
-        rtklibConnect = false;
-        setRtklibIconColor();
-    });
-    client.on('error', function() {
-        try {
-            console.log('rtklib running but server not started');
-        } catch (e) {}
+    chkRtklibClient.on('end', function() {
+        if (global.cfgDebug) {
+            try {
+                console.log('rtklib disconnected');
+            } catch (e) {}
+        }
 
         rtklibConnect = false;
-        setRtklibIconColor();
+        // setRtklibIconColor();
     });
+    chkRtklibClient.on('error', function() {
+        if (global.cfgDebug) {
+            try {
+                if (global.childRtklib === undefined) {
+                    console.log('rtklib not running?');
+                } else {
+                    console.log('rtklib running but not started?');
+                }
+
+            } catch (e) {}
+        }
+
+
+        rtklibConnect = false;
+        // setRtklibIconColor();
+    });
+    setTimeout(function() {
+        checkRtklib();
+    }, 1000);
 }
 
 /**
  * starts rtklib in a new child
  * @return nothing
  */
+
 function startRtklib() {
-    if (global.rtklibChild === undefined) {
-        var spawn = require('child_process').execFile;
-        global.rtklibChild = spawn(pathRtklib, [], [], function() {});
-        // rtklibChild = globalrtklibChild;
-        global.rtklibChild.on('error', function(code) {
-            setRtklibIconColor();
+    if (global.childRtklib === undefined) {
+        var spawn = require('child_process').spawn;
+        global.childRtklib = spawn(global.cfgRtklibPath, global.cfgRtklibArgs, {});
+        global.childRtklib.on('error', function(code) {
+            // setRtklibIconColor();
             console.log('error on starting rtklib ' + code);
         });
 
-        global.rtklibChild.on('exit', function(code) {
+        global.childRtklib.on('exit', function(code) {
             //makes troubles when site is reloaded and rtklib is then closed!!!
             //looks like console is then null
             try {
                 console.log('rtklib process exited with code ' + code);
             } catch (e) {}
-            global.rtklibChild = undefined;
-            setRtklibIconColor();
+            global.childRtklib = undefined;
+            // setRtklibIconColor();
 
 
         });
@@ -78,18 +93,20 @@ function startRtklib() {
  * kills rtklib child process
  * @return nothing
  */
+
 function stopRtklib() {
-    if (global.rtklibChild !== undefined) {
-        global.rtklibChild.kill();
+    if (global.childRtklib !== undefined) {
+        global.childRtklib.kill();
     }
 }
 
 /**
  * adds click funtionality to the rtklib start/stop-button
  */
+
 function setStartStopBtnRtklib() {
     $(".startRtklib a").click(function() {
-        if (global.rtklibChild !== undefined) {
+        if (global.childRtklib !== undefined) {
             stopRtklib();
         } else {
             startRtklib();
@@ -103,6 +120,7 @@ function setStartStopBtnRtklib() {
  * blue - rtklib is running but tcpserver is not started
  * green - rtklib is running and tcpserver is started, should give positions
  */
+
 function setRtklibIconColor() {
     if (rtklibConnect) {
         $(".startRtklib a").css({
@@ -110,13 +128,13 @@ function setRtklibIconColor() {
             "border-color": "#088A08"
         });
     }
-    if (global.rtklibChild === undefined) {
+    if (global.childRtklib === undefined) {
         $(".startRtklib a").css({
             "background-color": "#FE2E2E", //red
             "border-color": "#FF0000"
         });
     }
-    if (global.rtklibChild !== undefined && !rtklibConnect) {
+    if (global.childRtklib !== undefined && !rtklibConnect) {
         $(".startRtklib a").css({
             "background-color": "#2E64FE", //blue
             "border-color": "#0040FF"
