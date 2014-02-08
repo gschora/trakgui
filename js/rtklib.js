@@ -1,68 +1,54 @@
 var net = require('net');
-var rtklibConnect = false;
-var chkRtklibClient;
 
-checkRtklib();
+autoConnectRtklib();
 setStartStopBtnRtklib();
 setRtklibIconColor();
 
 /**
- * checks if rtklib is running and tcp-server is started
- * @return nothing
+ * checks if rtklib is running, tcp-server is started and
+ * sets global.cfgRtklibStatus if connected
  */
 
-function checkRtklib() {
-    // setRtklibIconColor();
-    chkRtklibClient = net.connect({
+function autoConnectRtklib() {
+    if (global.chkRtklibSocket === undefined) {
+        global.chkRtklibSocket = net.connect({
             port: global.cfgRtklibPort
-        },
-        function() { //'connect' listener
-            if (global.cfgDebug) {
-                try {
-                    console.log('rtklib connected');
-                } catch (e) {}
-            }
+        }, function() {
+            global.cfgRtklibStatus = 2;
 
         });
-    chkRtklibClient.on('data', function(data) {
-        rtklibConnect = true;
-        // setRtklibIconColor();
-        chkRtklibClient.end();
-    });
-    chkRtklibClient.on('end', function() {
-        if (global.cfgDebug) {
+
+        global.chkRtklibSocket.on('data', function(data) {
+            global.cfgRtklibStatus = 2;
             try {
-                console.log('rtklib disconnected');
+                // global.console.log('data.toString()');
             } catch (e) {}
-        }
 
-        rtklibConnect = false;
-        // setRtklibIconColor();
-    });
-    chkRtklibClient.on('error', function() {
-        if (global.cfgDebug) {
+            processData(data);
+            // global.chkRtklibSocket.end();
+        });
+
+        global.chkRtklibSocket.on('error', function() {
             try {
-                if (global.childRtklib === undefined) {
-                    console.log('rtklib not running?');
-                } else {
-                    console.log('rtklib running but not started?');
-                }
-
+                global.chkRtklibSocket.destroy();
             } catch (e) {}
-        }
+        });
+    } else if (global.chkRtklibSocket.destroyed) {
+        try {
+            global.chkRtklibSocket.connect({
+                port: global.cfgRtklibPort
+            });
+        } catch (e) {}
 
+    }
 
-        rtklibConnect = false;
-        // setRtklibIconColor();
-    });
     setTimeout(function() {
-        checkRtklib();
+        autoConnectRtklib();
     }, 1000);
 }
 
 /**
  * starts rtklib in a new child
- * @return nothing
  */
 
 function startRtklib() {
@@ -91,7 +77,6 @@ function startRtklib() {
 
 /**
  * kills rtklib child process
- * @return nothing
  */
 
 function stopRtklib() {
@@ -115,35 +100,44 @@ function setStartStopBtnRtklib() {
 }
 
 /**
- * sets color of button according to status of rtklib
- * red - rtklib is not running
+ * auto sets color of button according to status of rtklib
+ * red - rtklib is not running, starts rtklib automatically
  * blue - rtklib is running but tcpserver is not started
  * green - rtklib is running and tcpserver is started, should give positions
  */
 
 function setRtklibIconColor() {
-    if (rtklibConnect) {
-        $(".startRtklib a").css({
-            "background-color": "#04B404", //green
-            "border-color": "#088A08"
-        });
+    switch (global.cfgRtklibStatus) {
+        case 0:
+            $(".startRtklib a").css({
+                "background-color": "#FE2E2E", //red
+                "border-color": "#FF0000"
+            });
+            break;
+        case 1:
+            $(".startRtklib a").css({
+                "background-color": "#2E64FE", //blue
+                "border-color": "#0040FF"
+            });
+            break;
+        case 2:
+            $(".startRtklib a").css({
+                "background-color": "#04B404", //green
+                "border-color": "#088A08"
+            });
+            break;
     }
+
     if (global.childRtklib === undefined) {
-        $(".startRtklib a").css({
-            "background-color": "#FE2E2E", //red
-            "border-color": "#FF0000"
-        });
-    }
-    if (global.childRtklib !== undefined && !rtklibConnect) {
-        $(".startRtklib a").css({
-            "background-color": "#2E64FE", //blue
-            "border-color": "#0040FF"
-        });
+        global.cfgRtklibStatus = 0;
+        startRtklib();
+    } else {
+        global.cfgRtklibStatus = 1;
     }
 
     setTimeout(function() {
         setRtklibIconColor();
-    }, 1000);
+    }, 2000);
 }
 
 // var startgps = false;

@@ -10,10 +10,14 @@ var gui = require('nw.gui');
 })();
 
 function setupCfg() {
+
+    global.cfgDebug = false;
+
     // console.log('setup_cfg');
     global.cfgRtklibPath = 'tools\\rtklib\\rtknavi_mkl.exe';
     global.cfgRtklibPort = 8000;
     global.cfgRtklibArgs = [];
+    global.cfgRtklibStatus = 0; //0 = not running, 1 = running but not started, 2 = tcp-server started
 }
 
 
