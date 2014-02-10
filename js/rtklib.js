@@ -1,15 +1,16 @@
 var net = require('net');
 
-autoConnectRtklib();
+autoConnectChkRtklib();
 setStartStopBtnRtklib();
 setRtklibIconColor();
+autoConnectMonitorRtklib();
 
 /**
  * checks if rtklib is running, tcp-server is started and
  * sets global.cfgRtklibStatus if connected
  */
 
-function autoConnectRtklib() {
+function autoConnectChkRtklib() {
     if (global.chkRtklibSocket === undefined) {
         global.chkRtklibSocket = net.connect({
             port: global.cfgRtklibPort
@@ -20,12 +21,6 @@ function autoConnectRtklib() {
 
         global.chkRtklibSocket.on('data', function(data) {
             global.cfgRtklibStatus = 2;
-            try {
-                // global.console.log('data.toString()');
-            } catch (e) {}
-
-            processData(data);
-            // global.chkRtklibSocket.end();
         });
 
         global.chkRtklibSocket.on('error', function() {
@@ -42,9 +37,50 @@ function autoConnectRtklib() {
 
     }
 
-    setTimeout(function() {
-        autoConnectRtklib();
-    }, 1000);
+    setTimeout(autoConnectChkRtklib, 1000);
+}
+
+function autoConnectMonitorRtklib() {
+    // global.console.log('test');
+    if (global.chkMonitorRtklibSocket === undefined) {
+        global.chkMonitorRtklibSocket = net.connect({
+            port: global.cfgRtklibMonitorPort
+        });
+        addMonitorRtklibEventHandlers();
+        global.pageReloaded = false;
+
+    } else if (global.chkMonitorRtklibSocket.destroyed) {
+        try {
+            global.chkMonitorRtklibSocket.connect({
+                port: global.cfgRtklibMonitorPort
+            });
+
+
+        } catch (e) {}
+
+    }
+    global.console.log(global.pageReloaded);
+    if (global.pageReloaded) {
+        addMonitorRtklibEventHandlers();
+        global.pageReloaded = false;
+    }
+
+    // global.console.log(global.pageReloaded);
+
+    setTimeout(autoConnectMonitorRtklib, 1000);
+}
+
+function addMonitorRtklibEventHandlers() {
+    global.chkMonitorRtklibSocket.on('data', function(data) {
+        // global.console.log('monitor');
+        processRtklibData(data);
+    });
+
+    global.chkMonitorRtklibSocket.on('error', function() {
+        try {
+            global.chkMonitorRtklibSocket.destroy();
+        } catch (e) {}
+    });
 }
 
 /**
@@ -57,14 +93,14 @@ function startRtklib() {
         global.childRtklib = spawn(global.cfgRtklibPath, global.cfgRtklibArgs, {});
         global.childRtklib.on('error', function(code) {
             // setRtklibIconColor();
-            console.log('error on starting rtklib ' + code);
+            global.console.log('error on starting rtklib ' + code);
         });
 
         global.childRtklib.on('exit', function(code) {
             //makes troubles when site is reloaded and rtklib is then closed!!!
             //looks like console is then null
             try {
-                console.log('rtklib process exited with code ' + code);
+                global.console.log('rtklib process exited with code ' + code);
             } catch (e) {}
             global.childRtklib = undefined;
             // setRtklibIconColor();
@@ -135,9 +171,7 @@ function setRtklibIconColor() {
         global.cfgRtklibStatus = 1;
     }
 
-    setTimeout(function() {
-        setRtklibIconColor();
-    }, 2000);
+    setTimeout(setRtklibIconColor, 2000);
 }
 
 // var startgps = false;

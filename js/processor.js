@@ -1,13 +1,60 @@
-function processData (data) {
+module.exports = {
+    convdata: function(data) {
+        return convertData(data.toString());
+    }
+};
+
+function processRtklibData(data) {
     try {
-        global.console.log(data.toString());
+        if (data.length > 1) {
+            var currentRtklibPos = convertData(data);
+            // global.console.log("process");
+            setDrawCurrentPosition(currentRtklibPos); //map.js
+        }
+        
+        // global.console.log(currentRtklibPos);
 
+    } catch (e) {}
 
-
-
-    } catch(e){}
-    
 }
+
+/**
+ * converts rtklib monitor output into object
+ * @param  {String} data [rtklib monitor output-string]
+ * @return {Position} pos
+ * monitor[0] = date yyyy/mm/dd
+ * monitor[1] = time hh:mm:ss.ssss
+ * monitor[2] = latitude ddd.ddddddddd
+ * monitor[3] = longitude ddd.ddddddddd
+ * monitor[4] = height in m
+ * monitor[5] = status quality 1 = fixed, 2 = float, 5 = single
+ * monitor[6] = number of satelites
+ * monitor[7] = standard deviation in m
+ * 
+ */
+function convertData(data) {
+    if (data.toString().length > 1) {
+        var monitor = data.toString().trim().replace(/\s+/g, ",").split(",");
+        var pos = {
+            "lat": monitor[2],
+            "lon": monitor[3],
+            "height": monitor[4],
+            "status": monitor[5],
+            "numSat": monitor[6],
+            "angle_compass": 0, //angle_compass,
+            "pitch_compass": 0, //pitch_compass,
+            "roll_compass": 0, //roll_compass,
+            "x_tilt": 0, //x_tilt,
+            "y_tilt": 0 //y_tilt
+        };
+        return pos;
+    }
+}
+
+
+
+
+
 
 // processRtklibPosition();
 
@@ -41,45 +88,3 @@ function processData (data) {
 //     }, 2000);
 
 // }
-
-function convertData(data) {
-    var monitor = data.toString().split("\n")[0].split(" ");
-    // console.log(monitor);
-    var pos = null;
-    // console.log(angle_compass);
-
-    if (monitor.length > 1) {
-            var statNumSat = monitor[4].split(" ");
-            if (statNumSat.length == 2){
-                pos = {
-                    "lat": monitor[1],
-                    "lon": monitor[2],
-                    "height": monitor[3],
-                    "status": statNumSat[0],
-                    "numSat": statNumSat[1],
-                    "angle_compass": 0,
-                    "pitch_compass": 0,
-                    "roll_compass": 0,
-                    "x_tilt": 0,
-                    "y_tilt": 0
-                }
-            }else {
-                pos = {
-                    "lat": monitor[1],
-                    "lon": monitor[2],
-                    "height": monitor[3],
-                    "status": monitor[4],
-                    "numSat": monitor[5],
-                    "angle_compass":0,// angle_compass,
-                    "pitch_compass":0,// pitch_compass,
-                    "roll_compass": 0,//roll_compass,
-                    "x_tilt":0,// y_tilt,
-                    "y_tilt":0// x_tilt
-                }
-            }
-        console.info(pos);
-        return pos;
-    }
-    return null;
-
-}
