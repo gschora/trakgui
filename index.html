@@ -6,14 +6,11 @@
     <meta name="generator" content="HTML Tidy for HTML5 (experimental) for Windows https://github.com/w3c/tidy-html5/tree/c63cc39">
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
     <link rel="stylesheet" type="text/css" href="assets/styles/style.css" media="screen">
-    <link rel="stylesheet" type="text/css" href="assets/styles/jquery.fancybox-1.3.4.css" media="screen">
-    <link rel="stylesheet" type="text/css" href="assets/styles/nivo-slider.css" media="screen">
     <link rel="stylesheet" type="text/css" href="assets/styles/style-carbon.css" media="screen">
-    <script type="text/javascript" src="assets/scripts/jquery-latest.js"></script>
-    <script type="text/javascript" src="assets/scripts/jquery.mousewheel-3.0.4.pack.js"></script>
-    <script type="text/javascript" src="assets/scripts/jquery.fancybox-1.3.4.pack.js"></script>
+    <link rel="stylesheet" type="text/css" href="assets/jqui/dark-hive/jquery-ui-1.10.4.custom.css">
+    <script type="text/javascript" src="assets/jqui/jquery-1.10.2.js"></script>
+    <script type="text/javascript" src="assets/jqui/jquery-ui-1.10.4.custom.min.js"></script>
     <script type="text/javascript" src="assets/scripts/smoothscroll.js"></script>
-    <script type="text/javascript" src="assets/scripts/jquery.nivo.slider.pack.js"></script>
     <script type="text/javascript" src="assets/scripts/navigation.js"></script>
     <script type="text/javascript" src="js/ol/OpenLayers.debug.js"></script>
     <script type="text/javascript" src="js/ol/proj4js.js"></script>
@@ -55,9 +52,29 @@
     </nav>
     <section id="page" class="wrapper">
         <article id="home">
-            <h1>map</h1>
-            <div id="map"></div>
+            <div id="statusHeader">
 
+                <div>
+                    <span>status:</span>
+                    <span id="statusHeader_status">undef</span>
+                </div>
+                <div>
+                    <span>sat:</span>
+                    <span id="statusHeader_sat">0</span>
+                </div>
+                <div>
+                    <span>lat:</span>
+                    <span id="statusHeader_lat">0</span>
+                </div>
+                <div>
+                    <span>lon:</span>
+                    <span id="statusHeader_lon">0</span>
+                </div>
+            </div>
+            <div id="map"></div>
+            <div id="footer">
+                <button id="bla" class="footerBtn">bla</button>
+            </div>
         </article>
         <article id="about">
             <h1>about</h1>

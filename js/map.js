@@ -97,7 +97,7 @@ function createPositionVectorLayer() {
         fillOpacity: 0.4,
         strokeColor: '${statusStrokeColor}',
         strokeWidth: 1,
-        pointRadius: 3
+        pointRadius: 2
     });
     var position_vector_style_map = new OpenLayers.StyleMap({
         'default': position_vector_style_normal,
@@ -109,7 +109,10 @@ function createPositionVectorLayer() {
     });
     global.map.addLayer(global.map_layer_pos_vector);
 
-    global.map_point_currentPositionLineString = new OpenLayers.Geometry.LineString();
+    if (global.map_point_currentPositionLineString === undefined) {
+        global.map_point_currentPositionLineString = new OpenLayers.Geometry.LineString();
+    }
+    
     global.map_layer_pos_vector.addFeatures([new OpenLayers.Feature.Vector(global.map_point_currentPositionLineString)]);
 }
 
@@ -128,7 +131,7 @@ function setDrawCurrentPosition(pos) {
 
     global.map_point_currentPositionLineString.addPoint(realpoint);
 
-    if (global.map_point_currentPositionLineString.components.length > 100) {
+    if (global.map_point_currentPositionLineString.components.length > 1000) {
         global.map_point_currentPositionLineString.removePoint(global.map_point_currentPositionLineString.components[0]);
     }
 

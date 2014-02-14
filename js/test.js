@@ -1,5 +1,6 @@
 var net = require('net');
 var pr = require('./processor');
+var kal = require('./kalman');
 var i = 0;
 
 var chkRtklibSocket = net.connect({
@@ -15,7 +16,7 @@ var monitorServer = net.createServer(function(sock) {
 
     sock.on('data', function(data) {
         console.log('DATA ' + sock.remoteAddress + ': ' + data);
-     });
+    });
 
     sock.on('close', function(data) {
         // console.log('CLOSED: ' + sock.remoteAddress + ' ' + sock.remotePort);
@@ -26,31 +27,66 @@ var monitorServer = net.createServer(function(sock) {
 
 }).listen(8005, '127.0.0.1');
 
+
+var monitorOrig;
+var monitor;
 chkRtklibSocket.on('data', function(data) {
-    // if (i > 10) {
-    //     chkRtklibSocket.destroy();
-    // }
-
-    var monitor = data.toString().trim().replace(/\s+/g, ",").split(",");
-    // console.log(monitor);
-
-
-    if (monitor.length > 1) {
-
-        if (s !== undefined) {
-            // console.log(monitor.toString() + "\n");
-            s.write(monitor.toString().replace(/,/," ") + "\r\n");
-        }
+    monitorOrig = data.toString().trim().replace(/\s+/g, ",").split(",");
+    if (monitorOrig[4] === 1) {
+        updateKal(true)
     }
-
-    // console.log(data.toString());
-    // // console.log(data.toString().length);
-    // if (data.toString().length > 1) {
-    //     pr.convdata(data);
-    // }
 
 
 });
+
+updateKal(false);
+getKalPosition();
+
+
+function getKalPosition() {
+    var pos = kal.getPosition();
+
+
+    var lat = pos.lat;
+    var lon = pos.lon;
+
+    if (monitor !== undefined) {
+        if (monitor.length > 1) {
+            if (s !== undefined && monitor !== undefined) {
+                monitor[2] = parseFloat(lat.toPrecision(11));
+                monitor[3] = parseFloat(lon.toPrecision(11));
+                s.write(monitor.toString().replace(/,/, " ") + "\r\n");
+                console.log("getPos");
+            }
+
+            // console.log(monitor.toString());
+        }
+    }
+
+
+    setTimeout(getKalPosition, 300);
+}
+
+
+function updateKal(settime) {
+
+    if (monitor !== undefined) {
+        if (monitorOrig.length > 1) {
+            kal.updateFilter(parseFloat(monitorOrig[2]), parseFloat(monitorOrig[3]));
+            monitor = monitorOrig;
+            console.log("update");
+        }
+    } else {
+        monitor = monitorOrig;
+    }
+    if (!settime) {
+        setTimeout(updateKal, 5000);
+    }
+}
+
+
+
+
 
 chkRtklibSocket.on('error', function(data) {
     console.log("connection lost");
