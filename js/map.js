@@ -1,5 +1,6 @@
 var HOST = '192.168.1.104';
 var initMap = true;
+var zoomLevel = 11;
 
 
 /**
@@ -112,7 +113,7 @@ function createPositionVectorLayer() {
     if (global.map_point_currentPositionLineString === undefined) {
         global.map_point_currentPositionLineString = new OpenLayers.Geometry.LineString();
     }
-    
+
     global.map_layer_pos_vector.addFeatures([new OpenLayers.Feature.Vector(global.map_point_currentPositionLineString)]);
 }
 
@@ -131,7 +132,7 @@ function setDrawCurrentPosition(pos) {
 
     global.map_point_currentPositionLineString.addPoint(realpoint);
 
-    if (global.map_point_currentPositionLineString.components.length > 1000) {
+    if (global.map_point_currentPositionLineString.components.length > 100) {
         global.map_point_currentPositionLineString.removePoint(global.map_point_currentPositionLineString.components[0]);
     }
 
@@ -141,12 +142,16 @@ function setDrawCurrentPosition(pos) {
 
 function setMapCenter(positionPoint) {
     // global.console.log('center');
-    var zoomLevel = 11;
-    if (!initMap) {
-        zoomLevel = global.map.getZoom();
+    if (initMap) {
+        // zoomLevel = global.map.getZoom();
+        global.map.zoomTo(zoomLevel);
     }
-    var centerPoint = new OpenLayers.LonLat(positionPoint.x, positionPoint.y);
-    global.map.setCenter(centerPoint, zoomLevel);
+    if (global.mapAutoCenter) {
+        var centerPoint = new OpenLayers.LonLat(positionPoint.x, positionPoint.y);
+        global.map.setCenter(centerPoint);
+    }
+
+
 }
 
 function setHomeCenter() {

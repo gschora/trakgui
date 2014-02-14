@@ -7,7 +7,7 @@ var gui = require('nw.gui');
     autoReloadPage();
     // setupMenu();
     setupCfg();
-    setupGuiElements();
+    setupKeyBindings();
 })();
 
 function setupCfg() {
@@ -23,8 +23,9 @@ function setupCfg() {
     global.cfgRtklibArgs = [];
     global.cfgRtklibStatus = 0; //0 = not running, 1 = running but not started, 2 = tcp-server started
 
+    global.mapAutoCenter = true;
 
-    setPositionOnResize();
+    global.win.showDevTools();
 }
 
 
@@ -42,10 +43,6 @@ function autoReloadPage() {
     });
 }
 
-/**
- * sets up native Menu in node-webkit
- * @return nothing
- */
 
 function updateStatusHeader(pos) {
     switch (parseInt(pos.status)) {
@@ -73,24 +70,33 @@ function updateStatusHeader(pos) {
 
 }
 
-global.win.on('resize', setPositionOnResize);
 
-function setPositionOnResize () {
-    var ctrlPos = global.win.width - 110;
-    var mapWidth = global.win.width - 62;
-    var mapHeight = global.win.height - 120;
-    $('#settings').css('left',ctrlPos);
-    $('#page').css('width',mapWidth);
-    $('#map').css('height',mapHeight);
-}
 
-function setupGuiElements () {
-    $('.footerBtn').addClass("ui-button ui-widget ui-state-default ui-button-text-only");
-    $('.footerBtn').hover(function(){
-        $('.footerBtn').addClass("ui-state-hover");
-    }, function(){
-        $('.footerBtn').removeClass("ui-state-hover");
-    });
+
+
+function setupKeyBindings() {
+    global.window.onkeypress = function(key) {
+        global.console.log(key);
+
+        if (key.ctrlKey) {
+            switch (key.charCode) {
+                case 18: // ctrl + r
+                    global.win.reload();
+                    break;
+                case 11: // ctrl + k
+                    global.win.toggleKioskMode();
+                    break;
+                case 4: // ctrl + d
+                    if (global.win.isDevToolsOpen()) {
+                        global.win.closeDevTools();
+                    } else {
+                        global.win.showDevTools();
+                    }
+
+                    break;
+            }
+        }
+    };
 }
 
 // function setupMenu() {
