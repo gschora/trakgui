@@ -30,3 +30,28 @@ body {
 	background: url(assets/images/content/quote_white.png) no-repeat 0 3px; 
 	color: #fff;
 }
+
+
+
+/*
+mein zeugs
+ */
+
+.red {
+font-weight:bold;
+color:red;
+}
+.green {
+font-weight:bold;
+color: lime;
+}
+.yellow {
+font-weight:bold;
+color:yellow;
+}
+
+#statusHeader div{
+	font-size: 1.5vw;
+	float: left;
+	margin-left: 1vw;
+}

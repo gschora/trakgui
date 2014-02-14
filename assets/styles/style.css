@@ -78,8 +78,9 @@ q:before, q:after { content: ""; content: none; }
 
 /* Body and Wrapper */
 body {
-	font-family: Keffeesatz, Arial; 
-	font-size: 22px;
+	font-family: Verdana, Arial; 
+	font-size: 15px;
+	font-weight: bold;
 	color: #4b4b4b; 
 	text-shadow: 1px 1px 1px rgba(0, 0, 0, 0.2);
 	overflow: hidden;
@@ -94,7 +95,7 @@ body {
 	-webkit-box-shadow: 0 0 5px 5px rgba(75,75,75,0.25);
 	-moz-box-shadow: 0 0 5px 5px rgba(75,75,75,0.25);
 	box-shadow: 0 0 5px 5px rgba(75,75,75,0.25);
-	padding: 25px;
+	padding: 0 25px 25px 25px;
 
 }
 article{margin-bottom: 1000px;} /* Blank Space Between The Articles */
@@ -280,7 +281,7 @@ ul#settings .startRtklib a{
 
 div#map{
 	height: 500px;
-	width: 978px;
+	width: 100%;
 	margin-left: 0px;
 	z-index: 9997;
 }

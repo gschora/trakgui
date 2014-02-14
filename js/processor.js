@@ -1,8 +1,8 @@
-module.exports = {
-    convdata: function(data) {
-        return convertData(data.toString());
-    }
-};
+// module.exports = {
+//     convdata: function(data) {
+//         return convertData(data.toString());
+//     }
+// };
 
 function processRtklibData(data) {
     try {
@@ -10,6 +10,7 @@ function processRtklibData(data) {
             var currentRtklibPos = convertData(data);
             // global.console.log("process");
             setDrawCurrentPosition(currentRtklibPos); //map.js
+            updateStatusHeader(currentRtklibPos);
         }
         
         // global.console.log(currentRtklibPos);
@@ -36,11 +37,11 @@ function convertData(data) {
     if (data.toString().length > 1) {
         var monitor = data.toString().trim().replace(/\s+/g, ",").split(",");
         var pos = {
-            "lat": monitor[2],
-            "lon": monitor[3],
-            "height": monitor[4],
-            "status": monitor[5],
-            "numSat": monitor[6],
+            "lat": parseFloat(monitor[2]).toPrecision(11),
+            "lon": parseFloat(monitor[3]).toPrecision(11),
+            "height": parseFloat(monitor[4]),
+            "status": parseInt(monitor[5]),
+            "numSat": parseInt(monitor[6]),
             "angle_compass": 0, //angle_compass,
             "pitch_compass": 0, //pitch_compass,
             "roll_compass": 0, //roll_compass,

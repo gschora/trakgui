@@ -59,9 +59,12 @@ function autoConnectMonitorRtklib() {
         } catch (e) {}
 
     }
-    global.console.log(global.pageReloaded);
+    // global.console.log(global.pageReloaded);
     if (global.pageReloaded) {
         addMonitorRtklibEventHandlers();
+
+        // createPositionVectorLayer();
+
         global.pageReloaded = false;
     }
 
@@ -73,7 +76,7 @@ function autoConnectMonitorRtklib() {
 function addMonitorRtklibEventHandlers() {
     global.chkMonitorRtklibSocket.on('data', function(data) {
         // global.console.log('monitor');
-        processRtklibData(data);
+        processRtklibData(data);    //processor.js
     });
 
     global.chkMonitorRtklibSocket.on('error', function() {
@@ -129,6 +132,7 @@ function setStartStopBtnRtklib() {
     $(".startRtklib a").click(function() {
         if (global.childRtklib !== undefined) {
             stopRtklib();
+            startRtklib();
         } else {
             startRtklib();
         }
