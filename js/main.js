@@ -7,6 +7,7 @@ var gui = require('nw.gui');
     autoReloadPage();
     // setupMenu();
     setupCfg();
+    setupGuiElements();
 })();
 
 function setupCfg() {
@@ -83,6 +84,14 @@ function setPositionOnResize () {
     $('#map').css('height',mapHeight);
 }
 
+function setupGuiElements () {
+    $('.footerBtn').addClass("ui-button ui-widget ui-state-default ui-button-text-only");
+    $('.footerBtn').hover(function(){
+        $('.footerBtn').addClass("ui-state-hover");
+    }, function(){
+        $('.footerBtn').removeClass("ui-state-hover");
+    });
+}
 
 // function setupMenu() {
 //     // Load native UI library
