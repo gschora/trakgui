@@ -2,7 +2,6 @@ var HOST = '192.168.1.104';
 var initMap = true;
 var zoomLevel = 11;
 
-
 /**
  * auto sets up the map on the site
  * @return nothing
@@ -19,6 +18,7 @@ var zoomLevel = 11;
         allOverlays: true,
         maxExtent: new OpenLayers.Bounds(107778.5323, 286080.6331, 694883.9348, 575953.6150) //siehe http://spatialreference.org/ref/epsg/31287/
     });
+    createBaseVectorLayer();
     createWMSLayer();
     createPOIVectorLayer();
     createPositionVectorLayer();
@@ -28,9 +28,20 @@ var zoomLevel = 11;
 
 })();
 
+/**
+ * creates the Base-Vector-Layer, without it, toogleVisibility of WMS won't work
+ * @return {[type]} [description]
+ */
+
+function createBaseVectorLayer() {
+    var base_vector_layer = new OpenLayers.Layer.Vector("Base", {
+        isBaseLayer: true
+    });
+    global.map.addLayer(base_vector_layer);
+}
 
 /**
- * creates Vector-Layer and sets style
+ * creates Point-Of-Interrest Vector-Layer and sets style
  * @return nothing
  */
 
@@ -64,7 +75,7 @@ function createPOIVectorLayer() {
  */
 
 function createWMSLayer() {
-    var wmsLayer = new OpenLayers.Layer.WMS("Karte Österreich", "http://" + HOST + ":8080/service", {
+    global.map_layer_wms = new OpenLayers.Layer.WMS("Karte Österreich", "http://" + HOST + ":8080/service", {
         layers: 'ortho',
         // isBaseLayer: false,
         format: 'image/jpeg' //jpeg besser für rasterdaten
@@ -76,14 +87,22 @@ function createWMSLayer() {
 
     });
     // sets center of map to home-position and zooms in
-    wmsLayer.events.register('loadend', this, function() {
+    global.map_layer_wms.events.register('loadend', this, function() {
         if (initMap) {
             setHomeCenter();
             initMap = false;
         }
     });
-    global.map.addLayer(wmsLayer);
+    global.map.addLayer(global.map_layer_wms);
+    if (!global.mapShowWMS) {
+        global.map_layer_wms.setVisibility(false);
+    }
 }
+
+/**
+ * creates Current Position vector layer
+ * @return nothing
+ */
 
 function createPositionVectorLayer() {
     var position_vector_style_normal = new OpenLayers.Style({
@@ -117,6 +136,11 @@ function createPositionVectorLayer() {
     global.map_layer_pos_vector.addFeatures([new OpenLayers.Feature.Vector(global.map_point_currentPositionLineString)]);
 }
 
+/**
+ * adds controls to map
+ * x Layerswitcher
+ */
+
 function addMapCtrl() {
     global.map.addControl(new OpenLayers.Control.LayerSwitcher());
 }
@@ -124,6 +148,11 @@ function addMapCtrl() {
 function createCurrentDriveLineVectorLayer() {
 
 }
+
+/**
+ * adds current position to linestring on vector-layer and redraws that layer
+ * @param {position} pos position from processor.js
+ */
 
 function setDrawCurrentPosition(pos) {
     // global.console.log('pos');
@@ -140,19 +169,25 @@ function setDrawCurrentPosition(pos) {
     setMapCenter(realpoint);
 }
 
+/**
+ * sets the maps center to to a point
+ * @param {penLayers.Geometry.Point} positionPoint point to where the center should be set
+ */
+
 function setMapCenter(positionPoint) {
-    // global.console.log('center');
     if (initMap) {
-        // zoomLevel = global.map.getZoom();
         global.map.zoomTo(zoomLevel);
+        initMap = false;
     }
     if (global.mapAutoCenter) {
         var centerPoint = new OpenLayers.LonLat(positionPoint.x, positionPoint.y);
         global.map.setCenter(centerPoint);
     }
-
-
 }
+
+/**
+ * centers map on home location
+ */
 
 function setHomeCenter() {
     // GROßS Problem mit transformation von punkten von einer Projektion in die andere: anscheinend muss die seite fertiggeladen sein damit das funktioniert

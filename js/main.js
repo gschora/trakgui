@@ -24,6 +24,7 @@ function setupCfg() {
     global.cfgRtklibStatus = 0; //0 = not running, 1 = running but not started, 2 = tcp-server started
 
     global.mapAutoCenter = true;
+    global.mapShowWMS = false;
 
     global.win.showDevTools();
 }
@@ -73,7 +74,15 @@ function updateStatusHeader(pos) {
 
 
 
-
+/**
+ * sets up keybindings for control over keyboard
+ * @return nothing
+ *
+ * ctrl + r             reload page
+ * ctrl + shift + r     reload application
+ * ctrl + k             toggle kiosk mode
+ * ctrl + d             open devtool
+ */
 function setupKeyBindings() {
     global.window.onkeypress = function(key) {
         global.console.log(key);
@@ -81,7 +90,12 @@ function setupKeyBindings() {
         if (key.ctrlKey) {
             switch (key.charCode) {
                 case 18: // ctrl + r
-                    global.win.reload();
+                    if (key.shiftKey) {
+                        global.win.reloadDev();
+                    } else {
+                        global.win.reload();
+                    }
+                    
                     break;
                 case 11: // ctrl + k
                     global.win.toggleKioskMode();

@@ -8,56 +8,49 @@ Version: 1.0
 */
 
 /* Stylesheet For Carbon Theme */
-body { 
-	background: url(../images/bg/bg_carbon.jpg) fixed;
-	color: #fff; 
+ body {
+    background: url(../images/bg/bg_carbon.jpg) fixed;
+    color: #fff;
 }
 .wrapper {
-		background: rgba(0, 0, 0, 0.50);
+    background: rgba(0, 0, 0, 0.50);
 }
-
-#feed a
-{
-	color: #fff; 
-	font-size: 30px;
+#feed a {
+    color: #fff;
+    font-size: 30px;
 }
-
 #photos h4 {
-	color: #fff;
+    color: #fff;
 }
-
 .quote p {
-	background: url(assets/images/content/quote_white.png) no-repeat 0 3px; 
-	color: #fff;
+    background: url(assets/images/content/quote_white.png) no-repeat 0 3px;
+    color: #fff;
 }
-
-
-
 /*
 mein zeugs
  */
-
-.red {
-font-weight:bold;
-color:red;
+ .red {
+    font-weight:bold;
+    color:red;
 }
 .green {
-font-weight:bold;
-color: lime;
+    font-weight:bold;
+    color: lime;
 }
 .yellow {
-font-weight:bold;
-color:yellow;
+    font-weight:bold;
+    color:yellow;
 }
-
-#statusHeader div{
-	font-size: 1.5vw;
-	float: left;
-	margin-left: 1vw;
+#statusHeader div {
+    font-size: 1.5vw;
+    float: left;
+    margin-left: 1vw;
 }
-
-.footerBtn{
-	margin-top: 22px;
-	margin-left: 80px;
-	padding: 0px 5px 0px 5px;
+.footerBtn {
+    margin-top: 22px;
+    margin-left: 80px;
+    padding: 0px 5px 0px 5px;
+}
+.olMap {
+    background-color: rgba(0,0,0,0.6);
 }
