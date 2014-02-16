@@ -22,6 +22,7 @@ var zoomLevel = 11;
     createWMSLayer();
     createPOIVectorLayer();
     createPositionVectorLayer();
+    createLineGridVectorLayer();
     addMapCtrl();
 
     global.map.zoomToMaxExtent();
@@ -38,6 +39,38 @@ function createBaseVectorLayer() {
         isBaseLayer: true
     });
     global.map.addLayer(base_vector_layer);
+}
+
+/**
+ * creates WMS-Layer and sets center to home-position and zooms in
+ * @return nothing
+ */
+
+function createWMSLayer() {
+    global.map_layer_wms = new OpenLayers.Layer.WMS("Karte Österreich", "http://" + HOST + ":8080/service", {
+        layers: 'ortho',
+        // isBaseLayer: false,
+        format: 'image/jpeg' //jpeg besser für rasterdaten
+    }, {
+        singleTile: false,
+        buffer: 1,
+        // isBaseLayer: false,
+        ratio: 1
+
+    });
+    // sets center of map to home-position and zooms in
+    global.map_layer_wms.events.register('loadend', this, function() {
+        if (!global.mapShowWMS) {
+            global.map_layer_wms.setVisibility(false);
+        }
+        if (initMap) {
+            setHomeCenter();
+            initMap = false;
+        }
+
+    });
+    global.map.addLayer(global.map_layer_wms);
+
 }
 
 /**
@@ -67,36 +100,7 @@ function createPOIVectorLayer() {
     });
     global.map_layer_poi_vector.styleMap = vector_style_map;
     global.map.addLayer(global.map_layer_poi_vector);
-}
 
-/**
- * creates WMS-Layer and sets center to home-position and zooms in
- * @return nothing
- */
-
-function createWMSLayer() {
-    global.map_layer_wms = new OpenLayers.Layer.WMS("Karte Österreich", "http://" + HOST + ":8080/service", {
-        layers: 'ortho',
-        // isBaseLayer: false,
-        format: 'image/jpeg' //jpeg besser für rasterdaten
-    }, {
-        singleTile: false,
-        buffer: 1,
-        // isBaseLayer: false,
-        ratio: 1
-
-    });
-    // sets center of map to home-position and zooms in
-    global.map_layer_wms.events.register('loadend', this, function() {
-        if (initMap) {
-            setHomeCenter();
-            initMap = false;
-        }
-    });
-    global.map.addLayer(global.map_layer_wms);
-    if (!global.mapShowWMS) {
-        global.map_layer_wms.setVisibility(false);
-    }
 }
 
 /**
@@ -123,17 +127,36 @@ function createPositionVectorLayer() {
         'default': position_vector_style_normal,
         'temporary': position_vector_style_temp
     });
-    global.map_layer_pos_vector = new OpenLayers.Layer.Vector("Position", {
+    global.map_layer_vector_pos = new OpenLayers.Layer.Vector("Position", {
         styleMap: position_vector_style_map
         // isBaseLayer: true
     });
-    global.map.addLayer(global.map_layer_pos_vector);
+    global.map.addLayer(global.map_layer_vector_pos);
 
     if (global.map_point_currentPositionLineString === undefined) {
         global.map_point_currentPositionLineString = new OpenLayers.Geometry.LineString();
     }
 
-    global.map_layer_pos_vector.addFeatures([new OpenLayers.Feature.Vector(global.map_point_currentPositionLineString)]);
+    global.map_layer_vector_pos.addFeatures([new OpenLayers.Feature.Vector(global.map_point_currentPositionLineString)]);
+}
+
+function createLineGridVectorLayer() {
+    var line_grid_style_normal = new OpenLayers.Style({
+        fillColor: '#DF7401',
+        fillOpacity: 0.4,
+        strokeColor: '#DF7401',
+        strokeWidth: 1,
+        pointRadius: 2
+    });
+    var line_grid_vector_style_map = new OpenLayers.StyleMap({
+        'default': line_grid_style_normal
+    });
+    global.map_layer_vector_linegrid = new OpenLayers.Layer.Vector("Line", {
+        styleMap: line_grid_vector_style_map
+        // dx : 0.000001,
+        // dy : 0.000001
+    });
+    global.map.addLayer(global.map_layer_vector_linegrid);
 }
 
 /**
@@ -165,7 +188,7 @@ function setDrawCurrentPosition(pos) {
         global.map_point_currentPositionLineString.removePoint(global.map_point_currentPositionLineString.components[0]);
     }
 
-    global.map_layer_pos_vector.redraw();
+    global.map_layer_vector_pos.redraw();
     setMapCenter(realpoint);
 }
 

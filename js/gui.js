@@ -24,8 +24,8 @@ function setPositionOnResize() {
 function setupGuiElements() {
     styleMapFooterBtn();
     setPositionOnResize();
-    setupAutoCenterToogleBtn();
-    setupShowWMSToogleBtn();
+    setupBtnToogleMapAutoCenter();
+    setupBtnToogleMapShowWMS();
 }
 
 /**
@@ -36,19 +36,28 @@ function setupGuiElements() {
 function updateStatusHeader(pos) {
     switch (parseInt(pos.status)) {
         case 1:
-            $('#statusHeader_status').html("fix").addClass('green');
+            $('#statusHeader_status').html("<span>fix</span>").addClass('green');
             $('#statusHeader_status').removeClass('red');
             $('#statusHeader_status').removeClass('yellow');
+            $('#statusHeader_status').removeClass('white');
             break;
         case 2:
-            $('#statusHeader_status').html("float").addClass('yellow');
+            $('#statusHeader_status').html("<span>float</span>").addClass('yellow');
             $('#statusHeader_status').removeClass('red');
             $('#statusHeader_status').removeClass('green');
+            $('#statusHeader_status').removeClass('white');
             break;
         case 5:
-            $('#statusHeader_status').html("single").addClass('red');
+            $('#statusHeader_status').html("<span>single</span>").addClass('red');
             $('#statusHeader_status').removeClass('green');
             $('#statusHeader_status').removeClass('yellow');
+            $('#statusHeader_status').removeClass('white');
+            break;
+        default:
+            $('#statusHeader_status').html("<span>noStat</span>").addClass('white');
+            $('#statusHeader_status').removeClass('green');
+            $('#statusHeader_status').removeClass('yellow');
+            $('#statusHeader_status').removeClass('red');
             break;
     }
 
@@ -64,9 +73,9 @@ function updateStatusHeader(pos) {
 function styleMapFooterBtn() {
     $('.footerBtn').addClass("ui-button ui-widget ui-state-default ui-button-text-only");
     $('.footerBtn').hover(function() {
-        $('.footerBtn').addClass("ui-state-hover");
+        $(this).addClass("ui-state-hover");
     }, function() {
-        $('.footerBtn').removeClass("ui-state-hover");
+        $(this).removeClass("ui-state-hover");
     });
 }
 
@@ -74,19 +83,19 @@ function styleMapFooterBtn() {
  * sets up autocenterToogle-Button function
  */
 
-function setupAutoCenterToogleBtn() {
+function setupBtnToogleMapAutoCenter() {
     if (global.mapAutoCenter) {
-        $('#toogleMapAutoCenterBtn').addClass("ui-state-active");
+        $('#btnToogleMapAutoCenter').addClass("ui-state-active");
     } else {
-        $('#toogleMapAutoCenterBtn').removeClass("ui-state-active");
+        $('#btnToogleMapAutoCenter').removeClass("ui-state-active");
     }
 
-    $('#toogleMapAutoCenterBtn').click(function() {
+    $('#btnToogleMapAutoCenter').click(function() {
             if (global.mapAutoCenter) {
-                $('#toogleMapAutoCenterBtn').removeClass("ui-state-active");
+                $('#btnToogleMapAutoCenter').removeClass("ui-state-active");
                 global.mapAutoCenter = false;
             } else {
-                $('#toogleMapAutoCenterBtn').addClass("ui-state-active");
+                $('#btnToogleMapAutoCenter').addClass("ui-state-active");
                 global.mapAutoCenter = true;
             }
 
@@ -99,20 +108,20 @@ function setupAutoCenterToogleBtn() {
  * sets up the showWMSToogle-Button functions
  */
 
-function setupShowWMSToogleBtn() {
+function setupBtnToogleMapShowWMS() {
     if (global.mapShowWMS) {
-        $('#toogleMapViewWMSBtn').addClass("ui-state-active");
+        $('#btnToogleMapShowWMS').addClass("ui-state-active");
     } else {
-        $('#toogleMapViewWMSBtn').removeClass("ui-state-active");
+        $('#btnToogleMapShowWMS').removeClass("ui-state-active");
     }
 
-    $('#toogleMapViewWMSBtn').click(function() {
+    $('#btnToogleMapShowWMS').click(function() {
             if (global.mapShowWMS) {
-                $('#toogleMapViewWMSBtn').removeClass("ui-state-active");
+                $('#btnToogleMapShowWMS').removeClass("ui-state-active");
                 global.map_layer_wms.setVisibility(false);
                 global.mapShowWMS = false;
             } else {
-                $('#toogleMapViewWMSBtn').addClass("ui-state-active");
+                $('#btnToogleMapShowWMS').addClass("ui-state-active");
                 global.map_layer_wms.setVisibility(true);
                 global.mapShowWMS = true;
             }

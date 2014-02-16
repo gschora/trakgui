@@ -31,20 +31,38 @@ mein zeugs
  */
  .red {
     font-weight:bold;
-    color:red;
+    background-color:red;
+    color:black;
+    padding-right: 2px;
+    padding-left: 2px;
 }
 .green {
     font-weight:bold;
-    color: lime;
+    background-color: lime;
+    color:black;
+    padding-right: 2px;
+    padding-left: 2px;
 }
 .yellow {
     font-weight:bold;
-    color:yellow;
+    background-color:yellow;
+    color:black;
+    padding-right: 2px;
+    padding-left: 2px;
+}
+.white {
+    font-weight:bold;
+    background-color:white;
+    color:black;
+    padding-right: 2px;
+    padding-left: 2px;
 }
 #statusHeader div {
-    font-size: 1.5vw;
+    font-size: 1.3vw;
     float: left;
-    margin-left: 1vw;
+    padding-left: 0.5vw;
+    padding-right: 0.5vw;
+    border-left: 1px solid white;
 }
 .footerBtn {
     margin-top: 22px;
@@ -52,5 +70,5 @@ mein zeugs
     padding: 0px 5px 0px 5px;
 }
 .olMap {
-    background-color: rgba(0,0,0,0.6);
+    background-color: rgba(0, 0, 0, 0.6);
 }

@@ -53,10 +53,25 @@
     <section id="page" class="wrapper">
         <article id="home">
             <div id="statusHeader">
-
                 <div>
-                    <span>status:</span>
-                    <span id="statusHeader_status">undef</span>
+                    <span>rel:</span>
+                    <span id="statusHeader_relaisSpeed">0</span>
+                    <span>s</span>
+                </div>
+                <div>
+                    <span>hydro:</span>
+                    <span id="statusHeader_hydro">0</span>
+                    <span>s</span>
+                </div>
+                <div>
+                    <span>lowPass:</span>
+                    <span id="statusHeader_lowPass">0</span>
+                    <span>mm</span>
+                </div>
+                <div>
+                    <span>hiPass:</span>
+                    <span id="statusHeader_highPass">0</span>
+                    <span>mm</span>
                 </div>
                 <div>
                     <span>sat:</span>
@@ -70,10 +85,16 @@
                     <span>lon:</span>
                     <span id="statusHeader_lon">0</span>
                 </div>
+                <div id="statusHeader_status">
+                    <span class="white">noStat</span>
+                </div>
             </div>
             <div id="map"></div>
             <div id="footer">
-                <button id="toogleMapAutoCenterBtn" class="footerBtn">autoCenter</button>
+                <button id="btnToogleMapAutoCenter" class="footerBtn">autoCenter</button>
+                <button id="btnToogleMapShowWMS" class="footerBtn">show Map</button>
+                <button id="toogleMapViewWMSBtn" class="footerBtn">show Map</button>
+                <button id="toogleMapViewWMSBtn" class="footerBtn">show Map</button>
                 <button id="toogleMapViewWMSBtn" class="footerBtn">show Map</button>
             </div>
         </article>

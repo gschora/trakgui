@@ -1,7 +1,6 @@
 var gui = require('nw.gui');
 /**
  * starts all functions in die file
- * @return nothing
  */
 (function() {
     autoReloadPage();
@@ -10,29 +9,29 @@ var gui = require('nw.gui');
     setupKeyBindings();
 })();
 
+/**
+ * sets global Variables and configuration parameters
+ */
 function setupCfg() {
     global.win = gui.Window.get();
-    global.pageReloaded = true;
+    global.pageReloaded = true; //shows if page is reloaded
 
-    global.cfgDebug = false;
+    // global.cfgDebug = false;
 
-    // console.log('setup_cfg');
     global.cfgRtklibPath = 'tools\\rtklib\\rtknavi_mkl.exe';
     global.cfgRtklibPort = 8000;
     global.cfgRtklibMonitorPort = 52001;
     global.cfgRtklibArgs = [];
     global.cfgRtklibStatus = 0; //0 = not running, 1 = running but not started, 2 = tcp-server started
 
-    global.mapAutoCenter = true;
-    global.mapShowWMS = false;
+    global.mapAutoCenter = true; //when reload, sets center of map to current point
+    global.mapShowWMS = false; //if true shows wms layer
 
     global.win.showDevTools();
 }
 
-
 /**
  * auto reloads page in node-webkit everytime something is changed
- * @return nothing
  */
 
 function autoReloadPage() {
@@ -43,36 +42,6 @@ function autoReloadPage() {
             location.reload(false);
     });
 }
-
-
-function updateStatusHeader(pos) {
-    switch (parseInt(pos.status)) {
-        case 1:
-            $('#statusHeader_status').html("fix").addClass('green');
-            $('#statusHeader_status').removeClass('red');
-            $('#statusHeader_status').removeClass('yellow');
-            break;
-        case 2:
-            $('#statusHeader_status').html("float").addClass('yellow');
-            $('#statusHeader_status').removeClass('red');
-            $('#statusHeader_status').removeClass('green');
-            break;
-        case 5:
-            $('#statusHeader_status').html("single").addClass('red');
-            $('#statusHeader_status').removeClass('green');
-            $('#statusHeader_status').removeClass('yellow');
-            break;
-    }
-
-    $('#statusHeader_sat').html(pos.numSat);
-    $('#statusHeader_lat').html(pos.lat);
-    $('#statusHeader_lon').html(pos.lon);
-
-
-}
-
-
-
 
 /**
  * sets up keybindings for control over keyboard
