@@ -23,6 +23,7 @@ var zoomLevel = 11;
     createPOIVectorLayer();
     createPositionVectorLayer();
     createLineGridVectorLayer();
+    createCompassVectorLayer();
     addMapCtrl();
 
     global.map.zoomToMaxExtent();
@@ -159,6 +160,23 @@ function createLineGridVectorLayer() {
     global.map.addLayer(global.map_layer_vector_linegrid);
 }
 
+function createCompassVectorLayer() {
+    var compass_style = new OpenLayers.Style({
+        strokeColor: '#DF0101',
+        strokeWidth: 1
+    });
+    var compass_vector_style_map = new OpenLayers.StyleMap({
+        'default': compass_style
+    });
+    global.map_layer_vector_compass = new OpenLayers.Layer.Vector("Compass", {
+        styleMap: compass_vector_style_map
+    });
+    global.map.addLayer(global.map_layer_vector_compass);
+
+    global.map_point_compassLine = new OpenLayers.Geometry.LineString([new OpenLayers.Geometry.Point(0, 0), new OpenLayers.Geometry.Point(0, 40)]);
+    global.map_layer_vector_compass.addFeatures([new OpenLayers.Feature.Vector(global.map_point_compassLine)]);
+}
+
 /**
  * adds controls to map
  * x Layerswitcher
@@ -183,6 +201,9 @@ function setDrawCurrentPosition(pos) {
     // global.console.log("useComp: " + global.cfgGpsUseCompass);
     if (global.cfgGpsUseCompass) {
         realpoint = getRealCoords(newpoint, pos.x_tilt, pos.y_tilt, global.cfgCompassAntennaHeight, pos.angle_compass);
+        // pos.lat = realpoint.transform(new OpenLayers.Projection('EPSG:31287'), new OpenLayers.Projection('EPSG:4326')).x;
+        // pos.lon = realpoint.transform(new OpenLayers.Projection('EPSG:31287'), new OpenLayers.Projection('EPSG:4326')).y;
+
     } else {
         realpoint = newpoint;
     }
@@ -193,11 +214,10 @@ function setDrawCurrentPosition(pos) {
         global.map_point_currentPositionLineString.removePoint(global.map_point_currentPositionLineString.components[0]);
     }
 
-    // global.console.log(parseFloat(realpoint.x - newpoint.x)+"|"+ parseFloat(realpoint.y - newpoint.y));
-    // pos.lat = realpoint.transform(new OpenLayers.Projection('EPSG:31287'),new OpenLayers.Projection('EPSG:4326')).x;
-    // pos.lon = realpoint.transform(new OpenLayers.Projection('EPSG:31287'),new OpenLayers.Projection('EPSG:4326')).y;
 
     // global.console.log("lat:"+pos.lat);
+
+    moveCompassLine(realpoint, pos.angle_compass);
 
     global.map_layer_vector_pos.redraw();
     updateStatusHeader(pos);
@@ -250,4 +270,21 @@ function getRealCoords(originPoint, x_tilt, y_tilt, antennaHeight, compass_angle
 function calcAngleDist(angle, height) {
     // global.console.log(angle +"|"+height);
     return (Math.sin(angle * (Math.PI / 180)) * height); //Math.sin in JS ist in Radian deshalb die Formel mit Math.PI/180 multiplizieren!!!!
+}
+
+function moveCompassLine(destPoint, angle) {
+    // global.console.log("a: "+angle);
+    movePoint(global.map_point_compassLine.components[0], destPoint, -global.cfgCompassLineLength);
+    movePoint(global.map_point_compassLine.components[1], destPoint, global.cfgCompassLineLength);
+
+    global.map_point_compassLine.rotate(360 - angle, global.map_point_compassLine.getCentroid(true));
+    global.map_layer_vector_compass.redraw();
+
+}
+
+function movePoint(sourcePoint, destPoint, length) {
+    // global.console.log("length: "+length);
+    sourcePoint.x = destPoint.x;
+    sourcePoint.y = destPoint.y + length;
+    sourcePoint.clearBounds();
 }

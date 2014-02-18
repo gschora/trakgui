@@ -139,16 +139,20 @@ function setupBtnToogleMapShowWMS() {
 function setupBtnGpsUseCompass() {
     if (global.cfgGpsUseCompass) {
         $('#btnGpsUseCompass').addClass("ui-state-active");
+        global.map_layer_vector_compass.setVisibility(true);
     } else {
         $('#btnGpsUseCompass').removeClass("ui-state-active");
+        global.map_layer_vector_compass.setVisibility(false);
     }
 
     $('#btnGpsUseCompass').click(function() {
             if (global.cfgGpsUseCompass) {
                 $('#btnGpsUseCompass').removeClass("ui-state-active");
+                global.map_layer_vector_compass.setVisibility(false);
                 global.cfgGpsUseCompass = false;
             } else {
                 $('#btnGpsUseCompass').addClass("ui-state-active");
+                global.map_layer_vector_compass.setVisibility(true)
                 global.cfgGpsUseCompass = true;
             }
 

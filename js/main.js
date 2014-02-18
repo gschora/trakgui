@@ -41,6 +41,7 @@ function setupCfg() {
     global.cfgRtklibStatus = 0; //0 = not running, 1 = running but not started, 2 = tcp-server started
 
     global.cfgGpsUseCompass = true;
+    global.cfgCompassLineLength = 15;
 
     global.cfgMapAutoCenter = true; //when reload, sets center of map to current point
     global.cfgMapShowWMS = false; //if true shows wms layer
