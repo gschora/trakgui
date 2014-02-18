@@ -59,12 +59,9 @@ function autoConnectMonitorRtklib() {
         } catch (e) {}
 
     }
-    // global.console.log(global.pageReloaded);
+    // because on reload of page it looses connection, therefore i have to reconnect the eventhandlers
     if (global.pageReloaded) {
         addMonitorRtklibEventHandlers();
-
-        // createPositionVectorLayer();
-
         global.pageReloaded = false;
     }
 

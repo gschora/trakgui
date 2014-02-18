@@ -10,7 +10,6 @@ function processRtklibData(data) {
             var currentRtklibPos = convertData(data);
             // global.console.log("process");
             setDrawCurrentPosition(currentRtklibPos); //map.js
-            updateStatusHeader(currentRtklibPos);
         }
         
         // global.console.log(currentRtklibPos);

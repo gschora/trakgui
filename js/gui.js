@@ -22,10 +22,11 @@ function setPositionOnResize() {
  */
 
 function setupGuiElements() {
-    styleMapFooterBtn();
+    styleBtnMapFooter();
     setPositionOnResize();
     setupBtnToogleMapAutoCenter();
     setupBtnToogleMapShowWMS();
+    setupBtnGpsUseCompass()
 }
 
 /**
@@ -70,7 +71,7 @@ function updateStatusHeader(pos) {
  * styles the footer buttons of the map and adds hover effects
  */
 
-function styleMapFooterBtn() {
+function styleBtnMapFooter() {
     $('.footerBtn').addClass("ui-button ui-widget ui-state-default ui-button-text-only");
     $('.footerBtn').hover(function() {
         $(this).addClass("ui-state-hover");
@@ -84,19 +85,19 @@ function styleMapFooterBtn() {
  */
 
 function setupBtnToogleMapAutoCenter() {
-    if (global.mapAutoCenter) {
+    if (global.cfgMapAutoCenter) {
         $('#btnToogleMapAutoCenter').addClass("ui-state-active");
     } else {
         $('#btnToogleMapAutoCenter').removeClass("ui-state-active");
     }
 
     $('#btnToogleMapAutoCenter').click(function() {
-            if (global.mapAutoCenter) {
+            if (global.cfgMapAutoCenter) {
                 $('#btnToogleMapAutoCenter').removeClass("ui-state-active");
-                global.mapAutoCenter = false;
+                global.cfgMapAutoCenter = false;
             } else {
                 $('#btnToogleMapAutoCenter').addClass("ui-state-active");
-                global.mapAutoCenter = true;
+                global.cfgMapAutoCenter = true;
             }
 
         }
@@ -109,21 +110,46 @@ function setupBtnToogleMapAutoCenter() {
  */
 
 function setupBtnToogleMapShowWMS() {
-    if (global.mapShowWMS) {
+    if (global.cfgMapShowWMS) {
         $('#btnToogleMapShowWMS').addClass("ui-state-active");
     } else {
         $('#btnToogleMapShowWMS').removeClass("ui-state-active");
     }
 
     $('#btnToogleMapShowWMS').click(function() {
-            if (global.mapShowWMS) {
+            if (global.map_layer_wms.visibility) {
                 $('#btnToogleMapShowWMS').removeClass("ui-state-active");
                 global.map_layer_wms.setVisibility(false);
-                global.mapShowWMS = false;
+                global.cfgMapShowWMS = false;
             } else {
                 $('#btnToogleMapShowWMS').addClass("ui-state-active");
                 global.map_layer_wms.setVisibility(true);
-                global.mapShowWMS = true;
+                global.cfgMapShowWMS = true;
+            }
+
+        }
+
+    );
+}
+
+/**
+ * sets up the UseCompass-Button functions
+ */
+
+function setupBtnGpsUseCompass() {
+    if (global.cfgGpsUseCompass) {
+        $('#btnGpsUseCompass').addClass("ui-state-active");
+    } else {
+        $('#btnGpsUseCompass').removeClass("ui-state-active");
+    }
+
+    $('#btnGpsUseCompass').click(function() {
+            if (global.cfgGpsUseCompass) {
+                $('#btnGpsUseCompass').removeClass("ui-state-active");
+                global.cfgGpsUseCompass = false;
+            } else {
+                $('#btnGpsUseCompass').addClass("ui-state-active");
+                global.cfgGpsUseCompass = true;
             }
 
         }

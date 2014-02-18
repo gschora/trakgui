@@ -60,7 +60,7 @@ function createWMSLayer() {
     });
     // sets center of map to home-position and zooms in
     global.map_layer_wms.events.register('loadend', this, function() {
-        if (!global.mapShowWMS) {
+        if (!global.cfgMapShowWMS) {
             global.map_layer_wms.setVisibility(false);
         }
         if (initMap) {
@@ -173,22 +173,34 @@ function createCurrentDriveLineVectorLayer() {
 }
 
 /**
- * adds current position to linestring on vector-layer and redraws that layer
+ * adds current position to linestring on vector-layer and redraws that layer, updates status header
  * @param {position} pos position from processor.js
  */
 
 function setDrawCurrentPosition(pos) {
-    // global.console.log('pos');
+    var realpoint;
     var newpoint = new OpenLayers.Geometry.Point(pos.lon, pos.lat).transform(new OpenLayers.Projection('EPSG:4326'), new OpenLayers.Projection('EPSG:31287'));
-    var realpoint = newpoint;
+    // global.console.log("useComp: " + global.cfgGpsUseCompass);
+    if (global.cfgGpsUseCompass) {
+        realpoint = getRealCoords(newpoint, pos.x_tilt, pos.y_tilt, global.cfgCompassAntennaHeight, pos.angle_compass);
+    } else {
+        realpoint = newpoint;
+    }
 
     global.map_point_currentPositionLineString.addPoint(realpoint);
 
-    if (global.map_point_currentPositionLineString.components.length > 100) {
+    if (global.map_point_currentPositionLineString.components.length > 10) {
         global.map_point_currentPositionLineString.removePoint(global.map_point_currentPositionLineString.components[0]);
     }
 
+    // global.console.log(parseFloat(realpoint.x - newpoint.x)+"|"+ parseFloat(realpoint.y - newpoint.y));
+    // pos.lat = realpoint.transform(new OpenLayers.Projection('EPSG:31287'),new OpenLayers.Projection('EPSG:4326')).x;
+    // pos.lon = realpoint.transform(new OpenLayers.Projection('EPSG:31287'),new OpenLayers.Projection('EPSG:4326')).y;
+
+    // global.console.log("lat:"+pos.lat);
+
     global.map_layer_vector_pos.redraw();
+    updateStatusHeader(pos);
     setMapCenter(realpoint);
 }
 
@@ -202,7 +214,7 @@ function setMapCenter(positionPoint) {
         global.map.zoomTo(zoomLevel);
         initMap = false;
     }
-    if (global.mapAutoCenter) {
+    if (global.cfgMapAutoCenter) {
         var centerPoint = new OpenLayers.LonLat(positionPoint.x, positionPoint.y);
         global.map.setCenter(centerPoint);
     }
@@ -222,4 +234,20 @@ function setHomeCenter() {
     }
 
     setMapCenter(homePoint);
+}
+
+function getRealCoords(originPoint, x_tilt, y_tilt, antennaHeight, compass_angle) {
+    var x_dist = calcAngleDist(x_tilt + global.cfgCompassGyroCalX, antennaHeight);
+    var y_dist = calcAngleDist(y_tilt + global.cfgCompassGyroCalY, antennaHeight);
+    var destPoint = originPoint.clone();
+    // global.console.log(x_dist + "|" + y_dist + "|" + antennaHeight + "|" + compass_angle);
+    destPoint.move(x_dist, y_dist);
+    destPoint.rotate(360 - compass_angle, originPoint);
+
+    return destPoint;
+}
+
+function calcAngleDist(angle, height) {
+    // global.console.log(angle +"|"+height);
+    return (Math.sin(angle * (Math.PI / 180)) * height); //Math.sin in JS ist in Radian deshalb die Formel mit Math.PI/180 multiplizieren!!!!
 }

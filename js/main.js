@@ -12,7 +12,23 @@ var gui = require('nw.gui');
 /**
  * sets global Variables and configuration parameters
  */
+
 function setupCfg() {
+    if (localStorage.cfgCompassGyroCalX === undefined) {
+        localStorage.cfgCompassGyroCalX = 0;
+    }
+    global.cfgCompassGyroCalX = parseInt(localStorage.cfgCompassGyroCalX);
+
+    if (localStorage.cfgCompassGyroCalY === undefined) {
+        localStorage.cfgCompassGyroCalY = 0;
+    }
+    global.cfgCompassGyroCalY = parseInt(localStorage.cfgCompassGyroCalY);
+
+    if (localStorage.cfgCompassAntennaHeight === undefined) {
+        localStorage.cfgCompassAntennaHeight = 0;
+    }
+    global.cfgCompassAntennaHeight = parseInt(localStorage.cfgCompassAntennaHeight);
+
     global.win = gui.Window.get();
     global.pageReloaded = true; //shows if page is reloaded
 
@@ -24,8 +40,10 @@ function setupCfg() {
     global.cfgRtklibArgs = [];
     global.cfgRtklibStatus = 0; //0 = not running, 1 = running but not started, 2 = tcp-server started
 
-    global.mapAutoCenter = true; //when reload, sets center of map to current point
-    global.mapShowWMS = false; //if true shows wms layer
+    global.cfgGpsUseCompass = true;
+
+    global.cfgMapAutoCenter = true; //when reload, sets center of map to current point
+    global.cfgMapShowWMS = false; //if true shows wms layer
 
     global.win.showDevTools();
 }
@@ -52,6 +70,7 @@ function autoReloadPage() {
  * ctrl + k             toggle kiosk mode
  * ctrl + d             open devtool
  */
+
 function setupKeyBindings() {
     global.window.onkeypress = function(key) {
         global.console.log(key);
@@ -64,7 +83,7 @@ function setupKeyBindings() {
                     } else {
                         global.win.reload();
                     }
-                    
+
                     break;
                 case 11: // ctrl + k
                     global.win.toggleKioskMode();
