@@ -8,43 +8,41 @@ var gui = require('nw.gui');
     setupCfg();
     setupKeyBindings();
 })();
-
+    
 /**
  * sets global Variables and configuration parameters
  */
 
 function setupCfg() {
-    if (localStorage.cfgCompassGyroCalX === undefined) {
-        localStorage.cfgCompassGyroCalX = 0;
-    }
-    global.cfgCompassGyroCalX = parseInt(localStorage.cfgCompassGyroCalX);
+    if (global.cfg === undefined) global.cfg = {}; //short if
+    if (global.mapLayers === undefined) global.mapLayers = {};
+    if (global.mapFeatures === undefined) global.mapFeatures = {};
 
-    if (localStorage.cfgCompassGyroCalY === undefined) {
-        localStorage.cfgCompassGyroCalY = 0;
-    }
-    global.cfgCompassGyroCalY = parseInt(localStorage.cfgCompassGyroCalY);
+    if (localStorage.imuAccelCalX === undefined) localStorage.imuAccelCalX = 0;
+    if (localStorage.imuAccelCalY === undefined) localStorage.imuAccelCalY = 0;
+    if (localStorage.imuAntennaHeight === undefined) localStorage.imuAntennaHeight = 0;
 
-    if (localStorage.cfgCompassAntennaHeight === undefined) {
-        localStorage.cfgCompassAntennaHeight = 0;
-    }
-    global.cfgCompassAntennaHeight = parseInt(localStorage.cfgCompassAntennaHeight);
+    global.cfg.imuAccelCalX = parseInt(localStorage.imuAccelCalX);
+    global.cfg.imuAccelCalY = parseInt(localStorage.imuAccelCalY);
+    global.cfg.imuAntennaHeight = parseInt(localStorage.imuAntennaHeight);
 
     global.win = gui.Window.get();
     global.pageReloaded = true; //shows if page is reloaded
 
-    // global.cfgDebug = false;
+    global.cfg.mapProxyHost = '192.168.1.104';
+    global.cfg.mapProxyHostPort = '8080';
 
-    global.cfgRtklibPath = 'tools\\rtklib\\rtknavi_mkl.exe';
-    global.cfgRtklibPort = 8000;
-    global.cfgRtklibMonitorPort = 52001;
-    global.cfgRtklibArgs = [];
-    global.cfgRtklibStatus = 0; //0 = not running, 1 = running but not started, 2 = tcp-server started
+    global.cfg.rtklibPath = 'tools\\rtklib\\rtknavi_mkl.exe';
+    global.cfg.RtklibPort = 8000;
+    global.cfg.rtklibMonitorPort = 52001;
+    global.cfg.rtklibStartArgs = [];
+    global.cfg.rtklibStatus = 0; //0 = not running, 1 = running but not started, 2 = tcp-server started
 
-    global.cfgGpsUseCompass = true;
-    global.cfgCompassLineLength = 15;
+    global.cfg.gpsUseCompass = true;
+    global.cfg.compassLineLength = 15;
 
-    global.cfgMapAutoCenter = true; //when reload, sets center of map to current point
-    global.cfgMapShowWMS = false; //if true shows wms layer
+    global.cfg.mapAutoCenter = true; //when reload, sets center of map to current point
+    global.cfg.mapShowWMSLayer = false; //if true shows wms layer
 
     global.win.showDevTools();
 }

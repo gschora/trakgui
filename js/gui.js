@@ -27,6 +27,7 @@ function setupGuiElements() {
     setupBtnToogleMapAutoCenter();
     setupBtnToogleMapShowWMS();
     setupBtnGpsUseCompass()
+    setupBtnSetDriveLineManual();
 }
 
 /**
@@ -85,19 +86,19 @@ function styleBtnMapFooter() {
  */
 
 function setupBtnToogleMapAutoCenter() {
-    if (global.cfgMapAutoCenter) {
+    if (global.cfg.mapAutoCenter) {
         $('#btnToogleMapAutoCenter').addClass("ui-state-active");
     } else {
         $('#btnToogleMapAutoCenter').removeClass("ui-state-active");
     }
 
     $('#btnToogleMapAutoCenter').click(function() {
-            if (global.cfgMapAutoCenter) {
+            if (global.cfg.mapAutoCenter) {
                 $('#btnToogleMapAutoCenter').removeClass("ui-state-active");
-                global.cfgMapAutoCenter = false;
+                global.cfg.mapAutoCenter = false;
             } else {
                 $('#btnToogleMapAutoCenter').addClass("ui-state-active");
-                global.cfgMapAutoCenter = true;
+                global.cfg.mapAutoCenter = true;
             }
 
         }
@@ -110,21 +111,21 @@ function setupBtnToogleMapAutoCenter() {
  */
 
 function setupBtnToogleMapShowWMS() {
-    if (global.cfgMapShowWMS) {
+    if (global.cfg.mapShowWMSLayer) {
         $('#btnToogleMapShowWMS').addClass("ui-state-active");
     } else {
         $('#btnToogleMapShowWMS').removeClass("ui-state-active");
     }
 
     $('#btnToogleMapShowWMS').click(function() {
-            if (global.map_layer_wms.visibility) {
+            if (global.mapLayers.wms.visibility) {
                 $('#btnToogleMapShowWMS').removeClass("ui-state-active");
-                global.map_layer_wms.setVisibility(false);
-                global.cfgMapShowWMS = false;
+                global.mapLayers.wms.setVisibility(false);
+                global.cfg.mapShowWMSLayer = false;
             } else {
                 $('#btnToogleMapShowWMS').addClass("ui-state-active");
-                global.map_layer_wms.setVisibility(true);
-                global.cfgMapShowWMS = true;
+                global.mapLayers.wms.setVisibility(true);
+                global.cfg.mapShowWMSLayer = true;
             }
 
         }
@@ -137,26 +138,38 @@ function setupBtnToogleMapShowWMS() {
  */
 
 function setupBtnGpsUseCompass() {
-    if (global.cfgGpsUseCompass) {
+    if (global.cfg.gpsUseCompass) {
         $('#btnGpsUseCompass').addClass("ui-state-active");
-        global.map_layer_vector_compass.setVisibility(true);
     } else {
         $('#btnGpsUseCompass').removeClass("ui-state-active");
-        global.map_layer_vector_compass.setVisibility(false);
     }
 
     $('#btnGpsUseCompass').click(function() {
-            if (global.cfgGpsUseCompass) {
+            if (global.cfg.gpsUseCompass) {
                 $('#btnGpsUseCompass').removeClass("ui-state-active");
-                global.map_layer_vector_compass.setVisibility(false);
-                global.cfgGpsUseCompass = false;
+                global.mapLayers.vector_compass.setVisibility(false);
+                global.cfg.gpsUseCompass = false;
             } else {
                 $('#btnGpsUseCompass').addClass("ui-state-active");
-                global.map_layer_vector_compass.setVisibility(true)
-                global.cfgGpsUseCompass = true;
+                global.mapLayers.vector_compass.setVisibility(true)
+                global.cfg.gpsUseCompass = true;
             }
 
         }
 
     );
+}
+
+function setupBtnSetDriveLineManual() {
+
+
+
+    $('#btnDriveLineManual').click(function() {
+        var featureCtrl = global.map.getControlsBy("displayClass", "olControlDrawFeature")[0];
+        if (!featureCtrl.active || featureCtrl === null) {
+            featureCtrl.activate();
+        } else {
+            featureCtrl.deactivate();
+        }
+    });
 }

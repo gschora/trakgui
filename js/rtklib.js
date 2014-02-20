@@ -7,20 +7,20 @@ autoConnectMonitorRtklib();
 
 /**
  * checks if rtklib is running, tcp-server is started and
- * sets global.cfgRtklibStatus if connected
+ * sets global.cfg.rtklibStatus if connected
  */
 
 function autoConnectChkRtklib() {
     if (global.chkRtklibSocket === undefined) {
         global.chkRtklibSocket = net.connect({
-            port: global.cfgRtklibPort
+            port: global.cfg.RtklibPort
         }, function() {
-            global.cfgRtklibStatus = 2;
+            global.cfg.rtklibStatus = 2;
 
         });
 
         global.chkRtklibSocket.on('data', function(data) {
-            global.cfgRtklibStatus = 2;
+            global.cfg.rtklibStatus = 2;
         });
 
         global.chkRtklibSocket.on('error', function() {
@@ -31,7 +31,7 @@ function autoConnectChkRtklib() {
     } else if (global.chkRtklibSocket.destroyed) {
         try {
             global.chkRtklibSocket.connect({
-                port: global.cfgRtklibPort
+                port: global.cfg.RtklibPort
             });
         } catch (e) {}
 
@@ -44,7 +44,7 @@ function autoConnectMonitorRtklib() {
     // global.console.log('test');
     if (global.chkMonitorRtklibSocket === undefined) {
         global.chkMonitorRtklibSocket = net.connect({
-            port: global.cfgRtklibMonitorPort
+            port: global.cfg.rtklibMonitorPort
         });
         addMonitorRtklibEventHandlers();
         global.pageReloaded = false;
@@ -52,7 +52,7 @@ function autoConnectMonitorRtklib() {
     } else if (global.chkMonitorRtklibSocket.destroyed) {
         try {
             global.chkMonitorRtklibSocket.connect({
-                port: global.cfgRtklibMonitorPort
+                port: global.cfg.rtklibMonitorPort
             });
 
 
@@ -90,7 +90,7 @@ function addMonitorRtklibEventHandlers() {
 function startRtklib() {
     if (global.childRtklib === undefined) {
         var spawn = require('child_process').spawn;
-        global.childRtklib = spawn(global.cfgRtklibPath, global.cfgRtklibArgs, {});
+        global.childRtklib = spawn(global.cfg.rtklibPath, global.cfg.rtklibStartArgs, {});
         global.childRtklib.on('error', function(code) {
             // setRtklibIconColor();
             global.console.log('error on starting rtklib ' + code);
@@ -144,7 +144,7 @@ function setStartStopBtnRtklib() {
  */
 
 function setRtklibIconColor() {
-    switch (global.cfgRtklibStatus) {
+    switch (global.cfg.rtklibStatus) {
         case 0:
             $(".startRtklib a").css({
                 "background-color": "#FE2E2E", //red
@@ -166,10 +166,10 @@ function setRtklibIconColor() {
     }
 
     if (global.childRtklib === undefined) {
-        global.cfgRtklibStatus = 0;
+        global.cfg.rtklibStatus = 0;
         startRtklib();
     } else {
-        global.cfgRtklibStatus = 1;
+        global.cfg.rtklibStatus = 1;
     }
 
     setTimeout(setRtklibIconColor, 2000);
