@@ -61,7 +61,7 @@ function convertData(data) {
 // function processRtklibPosition() {
 //     if (global.childRtklib !== undefined && rtklibConnect) {
 //         prcsPosClient = net.connect({
-//                 port: global.cfg.RtklibPort
+//                 port: global.cfg.rtklibPort
 //             },
 //             function() { //'connect' listener
 //                 // try {

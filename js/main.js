@@ -8,7 +8,7 @@ var gui = require('nw.gui');
     setupCfg();
     setupKeyBindings();
 })();
-    
+
 /**
  * sets global Variables and configuration parameters
  */
@@ -29,20 +29,43 @@ function setupCfg() {
     global.win = gui.Window.get();
     global.pageReloaded = true; //shows if page is reloaded
 
-    global.cfg.mapProxyHost = '192.168.1.104';
-    global.cfg.mapProxyHostPort = '8080';
+    if (localStorage.mapProxyPath === undefined) localStorage.mapProxyPath = "";
+    if (localStorage.mapProxyStartArgs === undefined) localStorage.mapProxyStartArgs = "";
+    if (localStorage.mapProxyHost === undefined) localStorage.mapProxyHost = "192.168.1.104";
+    if (localStorage.mapProxyPort === undefined) localStorage.mapProxyPort = 8080;
 
-    global.cfg.rtklibPath = 'tools\\rtklib\\rtknavi_mkl.exe';
-    global.cfg.RtklibPort = 8000;
-    global.cfg.rtklibMonitorPort = 52001;
-    global.cfg.rtklibStartArgs = [];
+    global.cfg.mapProxyHost = localStorage.mapProxyHost;
+    global.cfg.mapProxyHostPort = parseInt(localStorage.mapProxyPort);
+    global.cfg.mapProxyPath = localStorage.mapProxyPath;
+    global.cfg.mapProxyStartArgs = localStorage.mapProxyStartArgs.split(",");
+
+    if (localStorage.rtklibPath === undefined) localStorage.rtklibPath = 'tools\\rtklib\\rtknavi_mkl.exe';
+    if (localStorage.rtklibPort === undefined) localStorage.rtklibPort = 8000;
+    if (localStorage.rtklibMonitorPort === undefined) localStorage.rtklibMonitorPort = 52001;
+    if (localStorage.rtklibStartArgs === undefined) localStorage.rtklibStartArgs = "test,asdf";
+
+    global.cfg.rtklibPath = localStorage.rtklibPath;
+    global.cfg.rtklibPort = parseInt(localStorage.rtklibPort);
+    global.cfg.rtklibMonitorPort = parseInt(localStorage.rtklibMonitorPort);
+    global.cfg.rtklibStartArgs = localStorage.rtklibStartArgs.split(",");
     global.cfg.rtklibStatus = 0; //0 = not running, 1 = running but not started, 2 = tcp-server started
 
-    global.cfg.gpsUseCompass = true;
-    global.cfg.compassLineLength = 15;
+    if (localStorage.gpsUseCompass === undefined) localStorage.gpsUseCompass = true;
+    if (localStorage.compassLineLength === undefined) localStorage.compassLineLength = 15;
+    if (localStorage.driveLineMoveSpacing === undefined) localStorage.driveLineMoveSpacing = 10;
+    global.cfg.gpsUseCompass = JSON.parse(localStorage.gpsUseCompass); //localstorage only stores strings, so we need JSON.parse to make a real bool out of the string
+    global.cfg.compassLineLength = parseInt(localStorage.compassLineLength);
+    global.cfg.driveLineMoveSpacing = parseInt(localStorage.driveLineMoveSpacing);
 
-    global.cfg.mapAutoCenter = true; //when reload, sets center of map to current point
-    global.cfg.mapShowWMSLayer = false; //if true shows wms layer
+    if (localStorage.mapAutoCenter === undefined) localStorage.mapAutoCenter = true;
+    if (localStorage.mapShowWMSLayer === undefined) localStorage.mapShowWMSLayer = false;
+    global.cfg.mapAutoCenter = JSON.parse(localStorage.mapAutoCenter); //when reload, sets center of map to current point
+    global.cfg.mapShowWMSLayer = JSON.parse(localStorage.mapShowWMSLayer); //if true shows wms layer
+
+
+    global.win.x = -1920;
+    global.win.y = 562;
+
 
     global.win.showDevTools();
 }
@@ -82,18 +105,22 @@ function setupKeyBindings() {
                     } else {
                         global.win.reload();
                     }
-
                     break;
-                case 11: // ctrl + k
+                case 11: // ctrl + k toogle kiosk mode
                     global.win.toggleKioskMode();
                     break;
-                case 4: // ctrl + d
+                case 4: // ctrl + d open/close dev-tools
                     if (global.win.isDevToolsOpen()) {
                         global.win.closeDevTools();
                     } else {
                         global.win.showDevTools();
                     }
-
+                    break;
+                case 2: // ctrl + b move driveline left
+                    moveDriveLineLeft((key.shiftKey)?100:10); //if shift move faster
+                    break;
+                case 14: // ctrl + n move driveline right
+                    moveDriveLineRight((key.shiftKey)?100:10);
                     break;
             }
         }

@@ -13,7 +13,7 @@ autoConnectMonitorRtklib();
 function autoConnectChkRtklib() {
     if (global.chkRtklibSocket === undefined) {
         global.chkRtklibSocket = net.connect({
-            port: global.cfg.RtklibPort
+            port: global.cfg.rtklibPort
         }, function() {
             global.cfg.rtklibStatus = 2;
 
@@ -31,7 +31,7 @@ function autoConnectChkRtklib() {
     } else if (global.chkRtklibSocket.destroyed) {
         try {
             global.chkRtklibSocket.connect({
-                port: global.cfg.RtklibPort
+                port: global.cfg.rtklibPort
             });
         } catch (e) {}
 

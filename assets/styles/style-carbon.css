@@ -74,3 +74,39 @@ mein zeugs
 .olImageLoadError {
 background-color: rgba(255, 255, 255, 0.6) !important;
 } 
+
+.txtPath {
+    width: 20%;
+}
+.txtPort {
+    width: 6%;
+}
+.txtLength {
+    width: 3%;
+}
+.txtStartArgs{
+    width: 20%;
+}
+.txtHost{
+    width: 15%;
+}
+#btnSaveSettings{
+    margin-left: 80%;
+}
+#settingsAlert{
+   margin-left: 30vw;
+   display:none;
+}
+
+#settingsPage input{
+    background-color: rgba(255,255,255,0.1);
+    border: 1px solid white;
+    font-weight: bold;
+    color: white;
+}
+
+.settingsAlert{
+    width: 30vw;
+    height: 4vh;
+    text-align: center;
+}

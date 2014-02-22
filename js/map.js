@@ -81,7 +81,8 @@ function createWMSLayer() {
 function createPOIVectorLayer() {
     // Vektorlayer und toolbar mit den zeichenwerkzeugen
     global.mapLayers.vector_poi = new OpenLayers.Layer.Vector('poi', {
-        renderers: ['Canvas', 'SVG', 'VML']
+        renderers: ['Canvas', 'SVG', 'VML'],
+        projection: new OpenLayers.Projection('EPSG:31287')
         // isBaseLayer: false
 
     });
@@ -152,7 +153,8 @@ function createDriveLineVectorLayer() {
         'default': line_grid_style_normal
     });
     global.mapLayers.vector_driveLine = new OpenLayers.Layer.Vector("Line", {
-        styleMap: line_grid_vector_style_map
+        styleMap: line_grid_vector_style_map,
+        projection: new OpenLayers.Projection('EPSG:31287')
         // dx : 0.000001,
         // dy : 0.000001
     });
@@ -163,7 +165,7 @@ function createDriveLineVectorLayer() {
         global.mapFeatures.line_driveLine = new OpenLayers.Geometry.LineString();
     }
 
-    global.mapLayers.vector_driveLine.addFeatures([new OpenLayers.Feature.Vector(global.mapFeatures.line_driveLine)]);
+    global.mapLayers.vector_driveLine.addFeatures([new OpenLayers.Feature.Vector(global.mapFeatures.line_driveLine), new OpenLayers.Feature.Vector(global.mapFeatures.point_helpPointLeft), new OpenLayers.Feature.Vector(global.mapFeatures.point_helpPointRight)]);
 }
 
 function createCompassVectorLayer() {
@@ -175,6 +177,7 @@ function createCompassVectorLayer() {
         'default': compass_style
     });
     global.mapLayers.vector_compass = new OpenLayers.Layer.Vector("Compass", {
+        projection: new OpenLayers.Projection('EPSG:31287'),
         styleMap: compass_vector_style_map
     });
     global.map.addLayer(global.mapLayers.vector_compass);
@@ -183,7 +186,9 @@ function createCompassVectorLayer() {
         global.mapLayers.vector_compass.setVisibility(false);
     }
 
-    global.mapFeatures.line_compass = new OpenLayers.Geometry.LineString([new OpenLayers.Geometry.Point(0, 0), new OpenLayers.Geometry.Point(0, 40)]);
+    if (global.mapFeatures.line_compass === undefined) {
+        global.mapFeatures.line_compass = new OpenLayers.Geometry.LineString([new OpenLayers.Geometry.Point(0, -global.cfg.compassLineLength), new OpenLayers.Geometry.Point(0, global.cfg.compassLineLength)]);
+    }
     global.mapLayers.vector_compass.addFeatures([new OpenLayers.Feature.Vector(global.mapFeatures.line_compass)]);
 }
 
@@ -195,10 +200,10 @@ function createCompassVectorLayer() {
 function addMapCtrl() {
     global.map.addControl(new OpenLayers.Control.LayerSwitcher());
     var drawFeatureCtrl = new OpenLayers.Control.DrawFeature(global.mapLayers.vector_driveLine, OpenLayers.Handler.Point);
-    drawFeatureCtrl.featureAdded =function (point) {
+    drawFeatureCtrl.featureAdded = function(point) {
         setDriveLineStartStop(point);
     };
-    
+
     global.map.addControl(drawFeatureCtrl);
 }
 
@@ -222,6 +227,7 @@ function drawCurrentPosition(pos) {
 
     global.mapFeatures.line_currentPosition.addPoint(realpoint);
 
+
     if (global.mapFeatures.line_currentPosition.components.length > 10) {
         global.mapFeatures.line_currentPosition.removePoint(global.mapFeatures.line_currentPosition.components[0]);
     }
@@ -235,6 +241,7 @@ function drawCurrentPosition(pos) {
     global.mapLayers.vector_pos.redraw();
     updateStatusHeader(pos);
     setMapCenter(realpoint);
+    getDriveLineSide(realpoint);
 }
 
 /**
@@ -287,8 +294,8 @@ function calcAngleDist(angle, height) {
 
 function moveCompassLine(destPoint, angle) {
     // global.console.log("a: "+angle);
-    movePoint(global.mapFeatures.line_compass.components[0], destPoint, -global.cfg.compassLineLength);
-    movePoint(global.mapFeatures.line_compass.components[1], destPoint, global.cfg.compassLineLength);
+    movePoint(global.mapFeatures.line_compass.components[0], destPoint, global.cfg.compassLineLength);
+    movePoint(global.mapFeatures.line_compass.components[1], destPoint, -global.cfg.compassLineLength);
 
     global.mapFeatures.line_compass.rotate(360 - angle, global.mapFeatures.line_compass.getCentroid(true));
     global.mapLayers.vector_compass.redraw();
@@ -310,12 +317,12 @@ function movePoint(sourcePoint, destPoint, length) {
 
 function setDriveLineStartStop(point) {
     if (global.mapFeatures.point_startPoint === undefined) {
-        global.console.log("1");
+        // global.console.log("1");
         // set startpoint
         global.mapFeatures.point_startPoint = point.geometry;
 
     } else if (global.mapFeatures.point_endPoint === undefined) {
-        global.console.log("2");
+        // global.console.log("2");
         // clear all other features, points, lines
         global.mapLayers.vector_driveLine.removeAllFeatures();
         // sets new endpoint
@@ -329,7 +336,7 @@ function setDriveLineStartStop(point) {
             setDriveLine(global.mapFeatures.line_driveLine);
         }
     } else {
-        global.console.log("3");
+        // global.console.log("3");
 
         global.mapFeatures.point_startPoint = point.geometry;
         global.mapFeatures.point_endPoint = undefined;
@@ -339,10 +346,67 @@ function setDriveLineStartStop(point) {
 
 function setDriveLine(line) {
     global.mapFeatures.line_driveLineCurrent = line;
-    var origin = line.getCentroid(true);
+    var driveLineOrigin = line.getCentroid(true);
     var driveLineAngle = getDriveLineAngle(line);
+    global.mapFeatures.point_helpPointLeft = new OpenLayers.Geometry.Point(driveLineOrigin.x - 10, driveLineOrigin.y);
+    global.mapFeatures.point_helpPointRight = new OpenLayers.Geometry.Point(driveLineOrigin.x + 10, driveLineOrigin.y);
+
+    global.mapFeatures.point_helpPointLeft.rotate(-driveLineAngle, driveLineOrigin);
+    global.mapFeatures.point_helpPointRight.rotate(-driveLineAngle, driveLineOrigin);
+
+    global.mapLayers.vector_driveLine.addFeatures([new OpenLayers.Feature.Vector(global.mapFeatures.point_helpPointLeft), new OpenLayers.Feature.Vector(global.mapFeatures.point_helpPointRight)]);
 
     global.console.log("angel: " + driveLineAngle);
+    // checkDistance();
+
+}
+
+/**
+ * checks if the distance from the helper-points is the same to the edge-points of the driveline
+ * to see if the points are really
+ * @return {[type]} [description]
+ */
+
+function checkDistance() {
+    var distDiffA = global.mapFeatures.point_helpPointLeft.distanceTo(global.mapFeatures.line_driveLine.components[0]) - global.mapFeatures.point_helpPointRight.distanceTo(global.mapFeatures.line_driveLine.components[0]);
+    var distDiffB = global.mapFeatures.point_helpPointLeft.distanceTo(global.mapFeatures.line_driveLine.components[1]) - global.mapFeatures.point_helpPointRight.distanceTo(global.mapFeatures.line_driveLine.components[1]);
+    var lineAA = new OpenLayers.Geometry.LineString([global.mapFeatures.point_helpPointLeft, global.mapFeatures.line_driveLine.components[0]]);
+    var lineAB = new OpenLayers.Geometry.LineString([global.mapFeatures.point_helpPointRight, global.mapFeatures.line_driveLine.components[0]]);
+    var lineBA = new OpenLayers.Geometry.LineString([global.mapFeatures.point_helpPointLeft, global.mapFeatures.line_driveLine.components[1]]);
+    var lineBB = new OpenLayers.Geometry.LineString([global.mapFeatures.point_helpPointRight, global.mapFeatures.line_driveLine.components[1]]);
+
+    var distA = lineAA.getGeodesicLength('EPSG:31287') - lineAB.getGeodesicLength('EPSG:31287');
+    var distB = lineBA.getGeodesicLength('EPSG:31287') - lineBB.getGeodesicLength('EPSG:31287');
+
+    global.console.log("diff: " + distDiffA + "|" + distDiffB + "||geo: " + distA + "|" + distB);
+}
+
+function getDriveLineSide(positionPoint) {
+
+    if (global.mapFeatures.point_helpPointLeft !== undefined && global.mapFeatures.point_helpPointRight !== undefined) {
+        var distLineLeft = new OpenLayers.Geometry.LineString([global.mapFeatures.point_helpPointLeft, positionPoint]);
+        var distLineRight = new OpenLayers.Geometry.LineString([global.mapFeatures.point_helpPointRight, positionPoint]);
+
+        var distLeft = distLineLeft.getGeodesicLength('EPSG:31287');
+        var distRight = distLineRight.getGeodesicLength('EPSG:31287');
+
+        var sideDiff = distLeft - distRight;
+
+        if (sideDiff > 0) {
+            // global.console.log("left");
+            return 0;
+        } else if (sideDiff < 0) {
+            // global.console.log("right");
+            return 1;
+        } else {
+            // global.console.log("middle");
+            return 2;
+        }
+
+        // global.console.log("dist:" + distLeft + "|" + distRight + "|" + sideDiff);
+    }
+
+
 
 }
 
@@ -365,5 +429,58 @@ function getDriveLineAngle(lineString) {
         return 360 - angle;
     } else {
         return angle;
+    }
+}
+
+function moveDriveLineLeft(factor) {
+    // global.console.log("moveLeft");
+    global.console.log(factor);
+    var spacing = global.cfg.driveLineMoveSpacing / factor;
+
+    if (global.mapFeatures.line_driveLine !== undefined && global.mapFeatures.line_driveLine.components.length === 2) {
+        var angle = getDriveLineAngle(global.mapFeatures.line_driveLine);
+        // save old lines and points
+        var oldLine = global.mapFeatures.line_driveLine.clone();
+        var oldPointLeft = global.mapFeatures.point_helpPointLeft.clone();
+        var oldPointRight = global.mapFeatures.point_helpPointRight.clone();
+        // move line and points
+        global.mapFeatures.line_driveLine.components[0].move(-spacing, 0);
+        global.mapFeatures.line_driveLine.components[1].move(-spacing, 0);
+        global.mapFeatures.point_helpPointLeft.move(-spacing, 0);
+        global.mapFeatures.point_helpPointRight.move(-spacing, 0);
+        // rotate everything 
+        global.mapFeatures.line_driveLine.components[0].rotate(-angle, oldLine.components[0]);
+        global.mapFeatures.line_driveLine.components[1].rotate(-angle, oldLine.components[1]);
+
+        global.mapFeatures.point_helpPointLeft.rotate(-angle, oldPointLeft);
+        global.mapFeatures.point_helpPointRight.rotate(-angle, oldPointRight);
+
+        global.mapLayers.vector_driveLine.redraw();
+    }
+}
+
+function moveDriveLineRight(factor) {
+    // global.console.log("moveRight");
+    var spacing = global.cfg.driveLineMoveSpacing / factor;
+
+    if (global.mapFeatures.line_driveLine !== undefined && global.mapFeatures.line_driveLine.components.length === 2) {
+        var angle = getDriveLineAngle(global.mapFeatures.line_driveLine);
+        // save old lines and points
+        var oldLine = global.mapFeatures.line_driveLine.clone();
+        var oldPointLeft = global.mapFeatures.point_helpPointLeft.clone();
+        var oldPointRight = global.mapFeatures.point_helpPointRight.clone();
+        // move line and points
+        global.mapFeatures.line_driveLine.components[0].move(spacing, 0);
+        global.mapFeatures.line_driveLine.components[1].move(spacing, 0);
+        global.mapFeatures.point_helpPointLeft.move(spacing, 0);
+        global.mapFeatures.point_helpPointRight.move(spacing, 0);
+        // rotate everything 
+        global.mapFeatures.line_driveLine.components[0].rotate(-angle, oldLine.components[0]);
+        global.mapFeatures.line_driveLine.components[1].rotate(-angle, oldLine.components[1]);
+
+        global.mapFeatures.point_helpPointLeft.rotate(-angle, oldPointLeft);
+        global.mapFeatures.point_helpPointRight.rotate(-angle, oldPointRight);
+
+        global.mapLayers.vector_driveLine.redraw();
     }
 }

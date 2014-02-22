@@ -26,9 +26,18 @@ function setupGuiElements() {
     setPositionOnResize();
     setupBtnToogleMapAutoCenter();
     setupBtnToogleMapShowWMS();
-    setupBtnGpsUseCompass()
+    setupBtnGpsUseCompass();
     setupBtnSetDriveLineManual();
+
+    setupSettingsAccordion();
 }
+
+/**
+ * ----------------------------------------------------------------------------
+ * map page
+ * ----------------------------------------------------------------------------
+ */
+
 
 /**
  * updates the status in the header with status(fix|float|single), #sat, lat and lon
@@ -151,7 +160,7 @@ function setupBtnGpsUseCompass() {
                 global.cfg.gpsUseCompass = false;
             } else {
                 $('#btnGpsUseCompass').addClass("ui-state-active");
-                global.mapLayers.vector_compass.setVisibility(true)
+                global.mapLayers.vector_compass.setVisibility(true);
                 global.cfg.gpsUseCompass = true;
             }
 
@@ -161,9 +170,6 @@ function setupBtnGpsUseCompass() {
 }
 
 function setupBtnSetDriveLineManual() {
-
-
-
     $('#btnDriveLineManual').click(function() {
         var featureCtrl = global.map.getControlsBy("displayClass", "olControlDrawFeature")[0];
         if (!featureCtrl.active || featureCtrl === null) {
@@ -172,4 +178,74 @@ function setupBtnSetDriveLineManual() {
             featureCtrl.deactivate();
         }
     });
+}
+
+/**
+ * ----------------------------------------------------------------------------
+ * settings page
+ * ----------------------------------------------------------------------------
+ */
+
+function setupSettingsAccordion() {
+    $('#settingsPage').accordion();
+    $('#btnSaveSettings').button();
+    $('#btnSaveSettings').click(function() {
+        saveSettingsTabProgs();
+        saveSettingsTabOptions();
+    });
+
+    setupSettingsTabPrograms();
+    setupSettingsTabOptions();
+
+}
+
+function setupSettingsTabPrograms() {
+    $('#txtRtklibPath').val(global.cfg.rtklibPath);
+    $('#txtRtklibPort').val(global.cfg.rtklibPort);
+    $('#txtRtklibMonitorPort').val(global.cfg.rtklibMonitorPort);
+    $('#txtRtklibStartArgs').val(global.cfg.rtklibStartArgs);
+
+    $('#txtMapproxyPath').val(global.cfg.mapProxyPath);
+    $('#txtMapproxyStartArgs').val(global.cfg.mapProxyStartArgs);
+    $('#txtMapproxyHost').val(global.cfg.mapProxyHost);
+    $('#txtMapproxyPort').val(global.cfg.mapProxyHostPort);
+
+}
+
+function setupSettingsTabOptions() {
+    $('#chkUseCompass').prop('checked', global.cfg.gpsUseCompass);
+    $('#txtCompassLineLength').val(global.cfg.compassLineLength);
+    $('#chkMapAutoCenter').prop('checked', global.cfg.mapAutoCenter);
+    $('#chkShowWmsLayer').prop('checked', global.cfg.mapShowWMSLayer);
+    $('#txtDriveLineMoveSpacing').val(global.cfg.driveLineMoveSpacing);
+}
+
+function saveSettingsTabProgs() {
+    localStorage.rtklibPath = global.cfg.rtklibPath = $('#txtRtklibPath').val();
+    localStorage.rtklibPort = global.cfg.rtklibPort = parseInt($('#txtRtklibPort').val());
+    localStorage.rtklibMonitorPort = global.cfg.rtklibMonitorPort = parseInt($('#txtRtklibMonitorPort').val());
+    localStorage.rtklibStartArgs = global.cfg.rtklibStartArgs = ($('#txtRtklibStartArgs').val()).split(",");
+
+    localStorage.mapProxyPath = global.cfg.mapProxyPath = $('#txtMapproxyPath').val();
+    localStorage.mapProxyStartArgs = global.cfg.mapProxyStartArgs = ($('#txtMapproxyStartArgs').val()).split(",");
+    localStorage.mapProxyHost = global.cfg.mapProxyHost = $('#txtMapproxyHost').val();
+    localStorage.mapProxyPort = global.cfg.mapProxyHostPort = parseInt($('#txtMapproxyPort').val());
+
+    settingsInfo("all program settings saved...");
+}
+
+function saveSettingsTabOptions() {
+    localStorage.gpsUseCompass = global.cfg.gpsUseCompass = $('#chkUseCompass').prop('checked');
+    localStorage.compassLineLength = global.cfg.compassLineLength = parseInt($('#txtCompassLineLength').val());
+    localStorage.mapAutoCenter = global.cfg.mapAutoCenter = $('#chkMapAutoCenter').prop('checked');
+    localStorage.mapShowWMSLayer = global.cfg.mapShowWMSLayer = $('#chkShowWmsLayer').prop('checked');
+    localStorage.driveLineMoveSpacing = global.cfg.driveLineMoveSpacing = parseInt($('#txtDriveLineMoveSpacing').val());
+    settingsInfo("all option settings saved...");
+}
+
+
+
+function settingsInfo(infoText) {
+    $('#settingsAlert').html(infoText);
+    $('#settingsAlert').toggle("fade", 200).toggle("fade", 2000);
 }

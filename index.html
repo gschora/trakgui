@@ -7,9 +7,9 @@
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
     <link rel="stylesheet" type="text/css" href="assets/styles/style.css" media="screen">
     <link rel="stylesheet" type="text/css" href="assets/styles/style-carbon.css" media="screen">
-    <link rel="stylesheet" type="text/css" href="assets/jqui/dark-hive/jquery-ui-1.10.4.custom.css">
+    <link rel="stylesheet" type="text/css" href="assets/jqui/css/dark-hive/jquery-ui-1.10.4.custom.css">
     <script type="text/javascript" src="assets/jqui/jquery-1.10.2.js"></script>
-    <script type="text/javascript" src="assets/jqui/jquery-ui-1.10.4.custom.min.js"></script>
+    <script type="text/javascript" src="assets/jqui/jquery-ui-1.10.4.custom.js"></script>
     <script type="text/javascript" src="assets/scripts/smoothscroll.js"></script>
     <script type="text/javascript" src="assets/scripts/navigation.js"></script>
     <script type="text/javascript" src="js/ol/OpenLayers.debug.js"></script>
@@ -116,9 +116,56 @@
 
         </article>
         <article id="contact">
-            <h1>console</h1>
-            <iframe style="width:100%" id="devtools" frameborder="0"></iframe>
-
+            <h1>Settings</h1>
+            <div id="settingsAlert" class="settingsAlert ui-state-hover"></div>
+            <button id="btnSaveSettings">save all</button>
+            <div id="settingsPage">
+                <h3>options</h3>
+                <div>
+                    <div>
+                        <h3>Map</h3>
+                        <span>use Compass:</span>
+                        <input type="checkbox" id="chkUseCompass">
+                        <span>Compass Line Length:</span>
+                        <input type="text" class="txtLength" id="txtCompassLineLength">
+                        <br>
+                        <span>Map autoCenter on Start:</span>
+                        <input type="checkbox" id="chkMapAutoCenter">
+                        <span>Map show WMS on Start:</span>
+                        <input type="checkbox" id="chkShowWmsLayer">
+                        <br>
+                        <span>Driveline move spacing:</span>
+                        <input type="text" class="txtLength" id="txtDriveLineMoveSpacing">
+                        <span>mm</span>
+                        <br>
+                    </div>
+                </div>
+                <h3>programs</h3>
+                <div>
+                    <div>
+                        <h3>Rtklib</h3>
+                        <span>Path:</span>
+                        <input id="txtRtklibPath" class="txtPath" type="text">
+                        <span>Port:</span>
+                        <input id="txtRtklibPort" class="txtPort" type="text">
+                        <span>MonitorPort:</span>
+                        <input id="txtRtklibMonitorPort" class="txtPort" type="text">
+                        <span>Args:</span>
+                        <input id="txtRtklibStartArgs" class="txtStartArgs" type="text">
+                    </div>
+                    <div>
+                        <h3>MapProxy</h3>
+                        <span>Path:</span>
+                        <input id="txtMapproxyPath" class="txtPath" type="text">
+                        <span>Args:</span>
+                        <input id="txtMapproxyStartArgs" class="txtStartArgs" type="text">
+                        <span>Host:</span>
+                        <input id="txtMapproxyHost" class="txtHost" type="text">
+                        <span>Port:</span>
+                        <input id="txtMapproxyPort" class="txtPort" type="text">
+                    </div>
+                </div>
+            </div>
         </article>
     </section>
 
