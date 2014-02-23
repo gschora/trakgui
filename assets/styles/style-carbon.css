@@ -83,6 +83,11 @@ background-color: rgba(255, 255, 255, 0.6) !important;
 }
 .txtLength {
     width: 3%;
+    text-align: right;
+}
+.txtSpacing {
+    width: 4%;
+    text-align: right;
 }
 .txtStartArgs{
     width: 20%;

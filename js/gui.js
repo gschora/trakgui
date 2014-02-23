@@ -218,6 +218,7 @@ function setupSettingsTabOptions() {
     $('#chkMapAutoCenter').prop('checked', global.cfg.mapAutoCenter);
     $('#chkShowWmsLayer').prop('checked', global.cfg.mapShowWMSLayer);
     $('#txtDriveLineMoveSpacing').val(global.cfg.driveLineMoveSpacing);
+    $('#txtDriveLineSpacing').val(global.cfg.driveLineSpacing);
 }
 
 function saveSettingsTabProgs() {
@@ -240,6 +241,7 @@ function saveSettingsTabOptions() {
     localStorage.mapAutoCenter = global.cfg.mapAutoCenter = $('#chkMapAutoCenter').prop('checked');
     localStorage.mapShowWMSLayer = global.cfg.mapShowWMSLayer = $('#chkShowWmsLayer').prop('checked');
     localStorage.driveLineMoveSpacing = global.cfg.driveLineMoveSpacing = parseInt($('#txtDriveLineMoveSpacing').val());
+    localStorage.driveLineSpacing = global.cfg.driveLineSpacing = parseInt($('#txtDriveLineSpacing').val());
     settingsInfo("all option settings saved...");
 }
 

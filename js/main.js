@@ -53,19 +53,22 @@ function setupCfg() {
     if (localStorage.gpsUseCompass === undefined) localStorage.gpsUseCompass = true;
     if (localStorage.compassLineLength === undefined) localStorage.compassLineLength = 15;
     if (localStorage.driveLineMoveSpacing === undefined) localStorage.driveLineMoveSpacing = 10;
+    if (localStorage.driveLineSpacing === undefined) localStorage.driveLineSpacing = 130;
     global.cfg.gpsUseCompass = JSON.parse(localStorage.gpsUseCompass); //localstorage only stores strings, so we need JSON.parse to make a real bool out of the string
     global.cfg.compassLineLength = parseInt(localStorage.compassLineLength);
     global.cfg.driveLineMoveSpacing = parseInt(localStorage.driveLineMoveSpacing);
+    global.cfg.driveLineSpacing = parseInt(localStorage.driveLineSpacing); //in cm
 
     if (localStorage.mapAutoCenter === undefined) localStorage.mapAutoCenter = true;
     if (localStorage.mapShowWMSLayer === undefined) localStorage.mapShowWMSLayer = false;
     global.cfg.mapAutoCenter = JSON.parse(localStorage.mapAutoCenter); //when reload, sets center of map to current point
     global.cfg.mapShowWMSLayer = JSON.parse(localStorage.mapShowWMSLayer); //if true shows wms layer
 
+    if (global.mapFeatures.driveLineListLeft === undefined) global.mapFeatures.driveLineListLeft = [];
+    if (global.mapFeatures.driveLineListRight === undefined) global.mapFeatures.driveLineListRight = [];
 
     global.win.x = -1920;
     global.win.y = 562;
-
 
     global.win.showDevTools();
 }
@@ -91,11 +94,15 @@ function autoReloadPage() {
  * ctrl + shift + r     reload application
  * ctrl + k             toggle kiosk mode
  * ctrl + d             open devtool
+ * ctrl + b             move driveline left fast
+ * ctrl + shift + b     move driveline left slow
+ * ctrl + n             move driveline right fast
+ * ctrl + shift + n     move driveline right slow
  */
 
 function setupKeyBindings() {
     global.window.onkeypress = function(key) {
-        global.console.log(key);
+        // global.console.log(key);
 
         if (key.ctrlKey) {
             switch (key.charCode) {
@@ -117,10 +124,20 @@ function setupKeyBindings() {
                     }
                     break;
                 case 2: // ctrl + b move driveline left
-                    moveDriveLineLeft((key.shiftKey)?100:10); //if shift move faster
+                    moveDriveLineLeft((key.shiftKey) ? 100 : 1); //if shift move faster
                     break;
                 case 14: // ctrl + n move driveline right
-                    moveDriveLineRight((key.shiftKey)?100:10);
+                    moveDriveLineRight((key.shiftKey) ? 100 : 1);
+                    break;
+            }
+
+        } else {
+            switch (key.charCode) {
+                case 97:
+                    switchDriveLineLeft();
+                    break;
+                case 115:
+                    switchDriveLineRight();
                     break;
             }
         }
