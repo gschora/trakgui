@@ -342,6 +342,10 @@ function setDriveLineStartStop(point) {
             // clear old drivelinelists
             global.mapFeatures.driveLineListLeft.length = 0;
             global.mapFeatures.driveLineListRight.length = 0;
+            //delete all drivelines from localstorage
+            clearDriveLineListsLocalStorage();
+            //add driveline to localstorage
+            saveGeoJSONString(global.mapFeatures.line_driveLine);
             // creates helper points
             setDriveLine(global.mapFeatures.line_driveLine);
         }
@@ -565,7 +569,7 @@ function switchDriveLineRight() {
 }
 
 function newDriveLineLeft() {
-    global.console.log("new line left");
+    // global.console.log("new line left");
     var driveLineLeft = global.mapFeatures.line_driveLine.clone();
     var spacing = global.cfg.driveLineSpacing / 100;
     var angle = getDriveLineAngle(driveLineLeft);
@@ -579,12 +583,12 @@ function newDriveLineLeft() {
     global.cfg.driveLineListIndexCurrent = global.mapFeatures.driveLineListLeft.length - 1;
 
     global.mapLayers.vector_driveLine.addFeatures([new OpenLayers.Feature.Vector(driveLineLeft)]);
-
+    saveGeoJSONString(driveLineLeft);
     setDriveLine(driveLineLeft);
 }
 
 function newDriveLineRight() {
-    global.console.log("new line right");
+    // global.console.log("new line right");
     var driveLineRight = global.mapFeatures.line_driveLine.clone();
     var spacing = global.cfg.driveLineSpacing / 100;
     var angle = getDriveLineAngle(driveLineRight);
@@ -598,5 +602,37 @@ function newDriveLineRight() {
     global.cfg.driveLineListIndexCurrent = global.mapFeatures.driveLineListRight.length - 1;
 
     global.mapLayers.vector_driveLine.addFeatures([new OpenLayers.Feature.Vector(driveLineRight)]);
+    saveGeoJSONString(driveLineRight);
     setDriveLine(driveLineRight);
+}
+
+function saveGeoJSONString(line) {
+    var w = new OpenLayers.Format.GeoJSON();
+    var geoj = w.write(line).replace(/"/g, "\\\"");
+
+    switch (global.cfg.driveLineListSide) {
+        case 0:
+            localStorage.driveLineListMiddle = geoj;
+            break;
+        case 1:
+            if (localStorage.driveLineListLeft === undefined) {
+                localStorage.driveLineListLeft = geoj;
+            } else {
+                localStorage.driveLineListLeft += ";" + geoj;
+            }
+            break;
+        case 2:
+            if (localStorage.driveLineListRight === undefined) {
+                localStorage.driveLineListRight = geoj;
+            } else {
+                localStorage.driveLineListRight += ";" + geoj;
+            }
+            break;
+    }
+}
+
+function clearDriveLineListsLocalStorage() {
+    localStorage.removeItem("driveLineListMiddle");
+    localStorage.removeItem("driveLineListLeft");
+    localStorage.removeItem("driveLineListRight");
 }
