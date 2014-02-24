@@ -173,6 +173,9 @@ function createDriveLineVectorLayer() {
     // adds other drivelines
     addDriveLineLists();
 
+    //add drivelines from localstorage
+    readGeoJSONString();
+
 }
 
 function createCompassVectorLayer() {
@@ -628,6 +631,37 @@ function saveGeoJSONString(line) {
                 localStorage.driveLineListRight += ";" + geoj;
             }
             break;
+    }
+}
+
+function readGeoJSONString() {
+    var r = new OpenLayers.Format.GeoJSON();
+    //set the original driveline
+    if (global.mapFeatures.driveLineListMiddle === undefined) {
+        global.mapFeatures.driveLineListMiddle = r.read(localStorage.driveLineListMiddle.replace(/\\/g, ""), "Geometry");
+        global.mapLayers.vector_driveLine.addFeatures(new OpenLayers.Feature.Vector(global.mapFeatures.driveLineListMiddle));
+
+        setDriveLine(global.mapFeatures.driveLineListMiddle);
+    }
+    //set drivelines on left side
+    if (global.mapFeatures.driveLineListLeft.length === 0 && localStorage.driveLineListLeft !== undefined) {
+        var listLeft = localStorage.driveLineListLeft.replace(/\\/g, "").split(";");
+
+        for (var i = 0, le = listLeft.length; i < le; i++) {
+            var itemLeft = r.read(listLeft[i], "Geometry");
+            global.mapLayers.vector_driveLine.addFeatures(new OpenLayers.Feature.Vector(itemLeft));
+            global.mapFeatures.driveLineListLeft.push(itemLeft);
+        }
+    }
+    //set drivelines on right side
+    if (global.mapFeatures.driveLineListRight.length === 0 && localStorage.driveLineListRight !== undefined) {
+        var listRight = localStorage.driveLineListRight.replace(/\\/g, "").split(";");
+
+        for (var j = 0, len = listRight.length; j < len; j++) {
+            var itemRight = r.read(listRight[j], "Geometry");
+            global.mapLayers.vector_driveLine.addFeatures(new OpenLayers.Feature.Vector(itemRight));
+            global.mapFeatures.driveLineListRight.push(itemRight);
+        }
     }
 }
 
