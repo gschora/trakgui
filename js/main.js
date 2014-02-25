@@ -67,6 +67,13 @@ function setupCfg() {
     if (global.mapFeatures.driveLineListLeft === undefined) global.mapFeatures.driveLineListLeft = [];
     if (global.mapFeatures.driveLineListRight === undefined) global.mapFeatures.driveLineListRight = [];
 
+    if (global.cfg.driveLineListSide === undefined) global.cfg.driveLineListSide = 0;
+    if (global.cfg.driveLineListIndexCurrent === undefined) global.cfg.driveLineListIndexCurrent = -1;
+
+    if(localStorage.driveLineArea !== undefined){
+        $('#statusHeader_driveLineArea').html(localStorage.driveLineArea);
+    }
+
     global.win.x = -1920;
     global.win.y = 562;
 
