@@ -107,6 +107,7 @@ function autoReloadPage() {
  * ctrl + shift + n     move driveline right slow
  * ctrl + shift + w     set driveLine startpoint gps
  * ctrl + shift + e     set driveLine endpoint gps
+ * ctrl + shift + o     toogle compass
  * m                    toggle showMap wms
  * a                    switch active driveline left
  * s                    switch active driveline right
@@ -145,10 +146,10 @@ function setupKeyBindings() {
                 case 23: // ctrl + shift + w
                     if (key.shiftKey) $('#btnGpsStartPoint').click();
                     break;
-                case 5: // ctrl + shif + e
+                case 5: // ctrl + shift + e
                     if (key.shiftKey) $('#btnGpsEndPoint').click();
                     break;
-                case 15: // ctrl + shif + o
+                case 15: // ctrl + shift + o
                     if (key.shiftKey) $('#btnGpsUseCompass').click();
                     break;
             }
