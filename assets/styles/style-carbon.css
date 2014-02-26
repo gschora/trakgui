@@ -8,55 +8,110 @@ Version: 1.0
 */
 
 /* Stylesheet For Carbon Theme */
-body { 
-	background: url(../images/bg/bg_carbon.jpg) fixed;
-	color: #fff; 
+ body {
+    background: url(../images/bg/bg_carbon.jpg) fixed;
+    color: #fff;
 }
 .wrapper {
-		background: rgba(0, 0, 0, 0.50);
+    background: rgba(0, 0, 0, 0.50);
 }
-
-#feed a
-{
-	color: #fff; 
-	font-size: 30px;
+#feed a {
+    color: #fff;
+    font-size: 30px;
 }
-
 #photos h4 {
-	color: #fff;
+    color: #fff;
 }
-
 .quote p {
-	background: url(assets/images/content/quote_white.png) no-repeat 0 3px; 
-	color: #fff;
+    background: url(assets/images/content/quote_white.png) no-repeat 0 3px;
+    color: #fff;
 }
-
-
-
 /*
 mein zeugs
  */
-
-.red {
-font-weight:bold;
-color:red;
+ .red {
+    font-weight:bold;
+    background-color:red;
+    color:black;
+    padding-right: 2px;
+    padding-left: 2px;
 }
 .green {
-font-weight:bold;
-color: lime;
+    font-weight:bold;
+    background-color: lime;
+    color:black;
+    padding-right: 2px;
+    padding-left: 2px;
 }
 .yellow {
-font-weight:bold;
-color:yellow;
+    font-weight:bold;
+    background-color:yellow;
+    color:black;
+    padding-right: 2px;
+    padding-left: 2px;
+}
+.white {
+    font-weight:bold;
+    background-color:white;
+    color:black;
+    padding-right: 2px;
+    padding-left: 2px;
+}
+#statusHeader div {
+    font-size: 1.3vw;
+    float: left;
+    padding-left: 0.5vw;
+    padding-right: 0.5vw;
+    border-left: 1px solid white;
+}
+.footerBtn {
+    margin-top: 22px;
+    padding: 0px 5px 0px 5px;
+}
+.olMap {
+    background-color: rgba(0, 0, 0, 0.6);
+}
+.olImageLoadError {
+background-color: rgba(255, 255, 255, 0.6) !important;
+} 
+
+.txtPath {
+    width: 20%;
+}
+.txtPort {
+    width: 6%;
+}
+.txtLength {
+    width: 3%;
+    text-align: right;
+}
+.txtSpacing {
+    width: 4%;
+    text-align: right;
+}
+.txtStartArgs{
+    width: 20%;
+}
+.txtHost{
+    width: 15%;
+}
+#btnSaveSettings{
+    margin-left: 80%;
+}
+#settingsAlert{
+   margin-left: 30vw;
+   display:none;
 }
 
-#statusHeader div{
-	font-size: 1.5vw;
-	float: left;
-	margin-left: 1vw;
+#settingsPage input{
+    background-color: rgba(255,255,255,0.1);
+    border: 1px solid white;
+    font-weight: bold;
+    color: white;
 }
 
-.footerBtn{
-	margin-top: 22px;
-	margin-left: 80px;
+.settingsAlert{
+    width: 30vw;
+    height: 4vh;
+    text-align: center;
 }

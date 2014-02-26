@@ -8,7 +8,7 @@
         // "min_height": 600,
         // "max_width": 1024,
         // "max_height": 600,
-        "toolbar": true,
+        "toolbar": false,
         "frame": true
     }
 }

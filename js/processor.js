@@ -9,8 +9,7 @@ function processRtklibData(data) {
         if (data.length > 1) {
             var currentRtklibPos = convertData(data);
             // global.console.log("process");
-            setDrawCurrentPosition(currentRtklibPos); //map.js
-            updateStatusHeader(currentRtklibPos);
+            drawCurrentPosition(currentRtklibPos); //map.js
         }
         
         // global.console.log(currentRtklibPos);
@@ -62,7 +61,7 @@ function convertData(data) {
 // function processRtklibPosition() {
 //     if (global.childRtklib !== undefined && rtklibConnect) {
 //         prcsPosClient = net.connect({
-//                 port: global.cfgRtklibPort
+//                 port: global.cfg.rtklibPort
 //             },
 //             function() { //'connect' listener
 //                 // try {

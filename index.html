@@ -7,9 +7,9 @@
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
     <link rel="stylesheet" type="text/css" href="assets/styles/style.css" media="screen">
     <link rel="stylesheet" type="text/css" href="assets/styles/style-carbon.css" media="screen">
-    <link rel="stylesheet" type="text/css" href="assets/jqui/dark-hive/jquery-ui-1.10.4.custom.css">
+    <link rel="stylesheet" type="text/css" href="assets/jqui/css/dark-hive/jquery-ui-1.10.4.custom.css">
     <script type="text/javascript" src="assets/jqui/jquery-1.10.2.js"></script>
-    <script type="text/javascript" src="assets/jqui/jquery-ui-1.10.4.custom.min.js"></script>
+    <script type="text/javascript" src="assets/jqui/jquery-ui-1.10.4.custom.js"></script>
     <script type="text/javascript" src="assets/scripts/smoothscroll.js"></script>
     <script type="text/javascript" src="assets/scripts/navigation.js"></script>
     <script type="text/javascript" src="js/ol/OpenLayers.debug.js"></script>
@@ -53,10 +53,29 @@
     <section id="page" class="wrapper">
         <article id="home">
             <div id="statusHeader">
-
                 <div>
-                    <span>status:</span>
-                    <span id="statusHeader_status">undef</span>
+                    <span>ar:</span>
+                    <span id="statusHeader_driveLineArea">0</span>
+                </div>
+                <div>
+                    <span>rel:</span>
+                    <span id="statusHeader_relaisSpeed">0</span>
+                    <span>s</span>
+                </div>
+                <div>
+                    <span>hydro:</span>
+                    <span id="statusHeader_hydro">0</span>
+                    <span>s</span>
+                </div>
+                <div>
+                    <span>lowPass:</span>
+                    <span id="statusHeader_lowPass">0</span>
+                    <span>mm</span>
+                </div>
+                <div>
+                    <span>hiPass:</span>
+                    <span id="statusHeader_highPass">0</span>
+                    <span>mm</span>
                 </div>
                 <div>
                     <span>sat:</span>
@@ -70,10 +89,19 @@
                     <span>lon:</span>
                     <span id="statusHeader_lon">0</span>
                 </div>
+                <div id="statusHeader_status">
+                    <span class="white">noStat</span>
+                </div>
             </div>
             <div id="map"></div>
             <div id="footer">
-                <button id="bla" class="footerBtn">bla</button>
+                <button id="btnToogleMapAutoCenter" class="footerBtn">autoCenter</button>
+                <button id="btnToogleMapShowWMS" class="footerBtn">show Map</button>
+                <button id="btnGpsStartPoint" class="footerBtn">GPS Start</button>
+                <button id="btnGpsEndPoint" class="footerBtn">GPS End</button>
+                <button id="btnGpsUseCompass" class="footerBtn">Compass</button>
+                <button id="btnDriveLineManual" class="footerBtn">man. DriveLine</button>
+                <!-- <button id="btnActiveDriveLineDelete" class="footerBtn" disabled>delete DriveLine</button> -->
             </div>
         </article>
         <article id="about">
@@ -93,12 +121,64 @@
 
         </article>
         <article id="contact">
-            <h1>contact</h1>
-
+            <h1>Settings</h1>
+            <div id="settingsAlert" class="settingsAlert ui-state-hover"></div>
+            <button id="btnSaveSettings">save all</button>
+            <div id="settingsPage">
+                <h3>options</h3>
+                <div>
+                    <div>
+                        <h3>Map</h3>
+                        <span>use Compass:</span>
+                        <input type="checkbox" id="chkUseCompass">
+                        <span>Compass Line Length:</span>
+                        <input type="text" class="txtLength" id="txtCompassLineLength">
+                        <br>
+                        <span>Map autoCenter on Start:</span>
+                        <input type="checkbox" id="chkMapAutoCenter">
+                        <span>Map show WMS on Start:</span>
+                        <input type="checkbox" id="chkShowWmsLayer">
+                        <br>
+                        <span>Driveline move spacing:</span>
+                        <input type="text" class="txtLength" id="txtDriveLineMoveSpacing">
+                        <span>mm</span>
+                        <br>
+                        <span>Driveline spacing:</span>
+                        <input type="text" class="txtSpacing" id="txtDriveLineSpacing">
+                        <span>cm</span>
+                    </div>
+                </div>
+                <h3>programs</h3>
+                <div>
+                    <div>
+                        <h3>Rtklib</h3>
+                        <span>Path:</span>
+                        <input id="txtRtklibPath" class="txtPath" type="text">
+                        <span>Port:</span>
+                        <input id="txtRtklibPort" class="txtPort" type="text">
+                        <span>MonitorPort:</span>
+                        <input id="txtRtklibMonitorPort" class="txtPort" type="text">
+                        <span>Args:</span>
+                        <input id="txtRtklibStartArgs" class="txtStartArgs" type="text">
+                    </div>
+                    <div>
+                        <h3>MapProxy</h3>
+                        <span>Path:</span>
+                        <input id="txtMapproxyPath" class="txtPath" type="text">
+                        <span>Args:</span>
+                        <input id="txtMapproxyStartArgs" class="txtStartArgs" type="text">
+                        <span>Host:</span>
+                        <input id="txtMapproxyHost" class="txtHost" type="text">
+                        <span>Port:</span>
+                        <input id="txtMapproxyPort" class="txtPort" type="text">
+                    </div>
+                </div>
+            </div>
         </article>
     </section>
 
     <script src="./js/main.js"></script>
+    <script src="./js/gui.js"></script>
     <script src="./js/processor.js"></script>
     <script src="./js/map.js"></script>
     <script src="./js/rtklib.js"></script>

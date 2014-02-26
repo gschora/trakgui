@@ -221,7 +221,7 @@ var Proj4js = {
                 if (point[t]!==undefined) { point.z= -v; }
                 break;
             default :
-                alert("ERROR: unknow axis ("+crs.axis[i]+") - check definition of "+crs.projName);
+                global.console.log("proj4js ERROR: unknow axis ("+crs.axis[i]+") - check definition of "+crs.projName);
                 return null;
             }
         }
@@ -1074,7 +1074,7 @@ Proj4js.common = {
       phi += dphi;
       if (Math.abs(dphi) <= .0000000001) return phi;
     }
-    alert("phi2z has NoConvergence");
+    global.console.log("proj4js phi2z has NoConvergence");
     return (-9999);
   },
 
@@ -1318,7 +1318,7 @@ Proj4js.datum = Proj4js.Class({
               && this.datum_params[6] == dest.datum_params[6]);
     } else if ( this.datum_type == Proj4js.common.PJD_GRIDSHIFT ||
                 dest.datum_type == Proj4js.common.PJD_GRIDSHIFT ) {
-      alert("ERROR: Grid shift transformations are not implemented.");
+      global.console.log("proj4js ERROR: Grid shift transformations are not implemented.");
       return false
     } else {
       return true; // datums are equal

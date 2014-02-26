@@ -102,15 +102,15 @@ article{margin-bottom: 1000px;} /* Blank Space Between The Articles */
 
 /* Typography */
 h1 { font-size: 25px; }
-h2 { font-size: 45px; }
-h3 { font-size: 40px; }
+h2 { font-size: 20px; }
+h3 { font-size: 15px; }
 h4 { font-size: 35px; }
 h5 { font-size: 30px; }
 h6 { font-size: 25px; }
 
 h1, h2, h3, h4, h5, h6 { 
 	color:#0099ff;  
-	font-family: KeffeesatzBold, Arial; 
+	font-family: Verdana, Arial; 
 }
 
 strong {
@@ -120,7 +120,7 @@ strong {
 
 a {
 	color:#0099ff;  
-	font-family: KeffeesatzBold, Arial; 
+	font-family: Verdana, Arial; 
 	text-decoration: none;
 	letter-spacing: 2px;
 }
@@ -711,7 +711,7 @@ a.-button.silver:hover {
 }
 
 /* Input */
-button, input, select, textarea { 
+/*button, input, select, textarea { 
 	width: auto; 
 	overflow: visible; 
 	margin: 0; 
@@ -730,9 +730,9 @@ textarea {
 label[for], input[type="button"], input[type="image"], button { 
 	cursor: pointer;	
 	font-size: 30px; 
-}
+}*/
 
-input[type="submit"] { 
+/*input[type="submit"] { 
 	font-size: 30px; font-family: 'KeffeesatzBold';
 	letter-spacing: 10px;
 	text-transform:uppercase;
@@ -758,7 +758,7 @@ input[type="text"],	textarea {
 	
 input[type="text"],	input[type="email"] {
 	width: 100%;	
-}
+}*/
 
 table td.input {
 	width: 300px;
@@ -780,7 +780,7 @@ legend {
 	padding: 10px 12px;	
 }
 
-input, textarea {
+/*input, textarea {
 	background: #fff;
 	border: 1px solid #aaa;
 	border-radius: 5px;
@@ -796,7 +796,7 @@ input:hover, input:focus, textarea:hover, textarea:focus {
 	-webkit-box-shadow: 0px 1px 1px #ccc, inset 1px 2px 1px rgba(0, 153, 255, 0.3);
 	-moz-box-shadow: 0px 1px 1px #ccc, inset 1px 2px 1px rgba(0, 153, 255, 0.3);
 	box-shadow: 0px 1px 1px #ccc, inset 1px 2px 1px rgba(0, 153, 255, 0.3);
-}
+}*/
 
 /* Contact */
 #social-network img {

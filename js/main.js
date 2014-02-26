@@ -1,36 +1,87 @@
 var gui = require('nw.gui');
 /**
  * starts all functions in die file
- * @return nothing
  */
 (function() {
     autoReloadPage();
     // setupMenu();
     setupCfg();
-    setupGuiElements();
+    setupKeyBindings();
 })();
 
+/**
+ * sets global Variables and configuration parameters
+ */
+
 function setupCfg() {
+    if (global.cfg === undefined) global.cfg = {}; //short if
+    if (global.mapLayers === undefined) global.mapLayers = {};
+    if (global.mapFeatures === undefined) global.mapFeatures = {};
+
+    if (localStorage.imuAccelCalX === undefined) localStorage.imuAccelCalX = 0;
+    if (localStorage.imuAccelCalY === undefined) localStorage.imuAccelCalY = 0;
+    if (localStorage.imuAntennaHeight === undefined) localStorage.imuAntennaHeight = 0;
+
+    global.cfg.imuAccelCalX = parseInt(localStorage.imuAccelCalX);
+    global.cfg.imuAccelCalY = parseInt(localStorage.imuAccelCalY);
+    global.cfg.imuAntennaHeight = parseInt(localStorage.imuAntennaHeight);
+
     global.win = gui.Window.get();
-    global.pageReloaded = true;
+    global.pageReloaded = true; //shows if page is reloaded
 
-    global.cfgDebug = false;
+    if (localStorage.mapProxyPath === undefined) localStorage.mapProxyPath = "";
+    if (localStorage.mapProxyStartArgs === undefined) localStorage.mapProxyStartArgs = "";
+    if (localStorage.mapProxyHost === undefined) localStorage.mapProxyHost = "192.168.1.104";
+    if (localStorage.mapProxyPort === undefined) localStorage.mapProxyPort = 8080;
 
-    // console.log('setup_cfg');
-    global.cfgRtklibPath = 'tools\\rtklib\\rtknavi_mkl.exe';
-    global.cfgRtklibPort = 8000;
-    global.cfgRtklibMonitorPort = 52001;
-    global.cfgRtklibArgs = [];
-    global.cfgRtklibStatus = 0; //0 = not running, 1 = running but not started, 2 = tcp-server started
+    global.cfg.mapProxyHost = localStorage.mapProxyHost;
+    global.cfg.mapProxyHostPort = parseInt(localStorage.mapProxyPort);
+    global.cfg.mapProxyPath = localStorage.mapProxyPath;
+    global.cfg.mapProxyStartArgs = localStorage.mapProxyStartArgs.split(",");
 
+    if (localStorage.rtklibPath === undefined) localStorage.rtklibPath = 'tools\\rtklib\\rtknavi_mkl.exe';
+    if (localStorage.rtklibPort === undefined) localStorage.rtklibPort = 8000;
+    if (localStorage.rtklibMonitorPort === undefined) localStorage.rtklibMonitorPort = 52001;
+    if (localStorage.rtklibStartArgs === undefined) localStorage.rtklibStartArgs = "test,asdf";
 
-    setPositionOnResize();
+    global.cfg.rtklibPath = localStorage.rtklibPath;
+    global.cfg.rtklibPort = parseInt(localStorage.rtklibPort);
+    global.cfg.rtklibMonitorPort = parseInt(localStorage.rtklibMonitorPort);
+    global.cfg.rtklibStartArgs = localStorage.rtklibStartArgs.split(",");
+    global.cfg.rtklibStatus = 0; //0 = not running, 1 = running but not started, 2 = tcp-server started
+
+    if (localStorage.gpsUseCompass === undefined) localStorage.gpsUseCompass = true;
+    if (localStorage.compassLineLength === undefined) localStorage.compassLineLength = 15;
+    if (localStorage.driveLineMoveSpacing === undefined) localStorage.driveLineMoveSpacing = 10;
+    if (localStorage.driveLineSpacing === undefined) localStorage.driveLineSpacing = 130;
+    global.cfg.gpsUseCompass = JSON.parse(localStorage.gpsUseCompass); //localstorage only stores strings, so we need JSON.parse to make a real bool out of the string
+    global.cfg.compassLineLength = parseInt(localStorage.compassLineLength);
+    global.cfg.driveLineMoveSpacing = parseInt(localStorage.driveLineMoveSpacing);
+    global.cfg.driveLineSpacing = parseInt(localStorage.driveLineSpacing); //in cm
+
+    if (localStorage.mapAutoCenter === undefined) localStorage.mapAutoCenter = true;
+    if (localStorage.mapShowWMSLayer === undefined) localStorage.mapShowWMSLayer = false;
+    global.cfg.mapAutoCenter = JSON.parse(localStorage.mapAutoCenter); //when reload, sets center of map to current point
+    global.cfg.mapShowWMSLayer = JSON.parse(localStorage.mapShowWMSLayer); //if true shows wms layer
+
+    if (global.mapFeatures.driveLineListLeft === undefined) global.mapFeatures.driveLineListLeft = [];
+    if (global.mapFeatures.driveLineListRight === undefined) global.mapFeatures.driveLineListRight = [];
+
+    if (global.cfg.driveLineListSide === undefined) global.cfg.driveLineListSide = 0;
+    if (global.cfg.driveLineListIndexCurrent === undefined) global.cfg.driveLineListIndexCurrent = -1;
+
+    if (localStorage.driveLineArea !== undefined) {
+        $('#statusHeader_driveLineArea').html(localStorage.driveLineArea);
+    }
+
+    global.win.x = -1920;
+    global.win.y = 562;
+
+    global.win.showDevTools();
 }
-
 
 /**
  * auto reloads page in node-webkit everytime something is changed
- * @return nothing
  */
 
 function autoReloadPage() {
@@ -43,54 +94,83 @@ function autoReloadPage() {
 }
 
 /**
- * sets up native Menu in node-webkit
+ * sets up keybindings for control over keyboard
  * @return nothing
+ *
+ * ctrl + r             reload page
+ * ctrl + shift + r     reload application
+ * ctrl + k             toggle kiosk mode
+ * ctrl + d             open devtool
+ * ctrl + b             move driveline left fast
+ * ctrl + shift + b     move driveline left slow
+ * ctrl + n             move driveline right fast
+ * ctrl + shift + n     move driveline right slow
+ * ctrl + shift + w     set driveLine startpoint gps
+ * ctrl + shift + e     set driveLine endpoint gps
+ * ctrl + shift + o     toogle compass
+ * m                    toggle showMap wms
+ * a                    switch active driveline left
+ * s                    switch active driveline right
+ * z                    toggle auto center
  */
 
-function updateStatusHeader(pos) {
-    switch (parseInt(pos.status)) {
-        case 1:
-            $('#statusHeader_status').html("fix").addClass('green');
-            $('#statusHeader_status').removeClass('red');
-            $('#statusHeader_status').removeClass('yellow');
-            break;
-        case 2:
-            $('#statusHeader_status').html("float").addClass('yellow');
-            $('#statusHeader_status').removeClass('red');
-            $('#statusHeader_status').removeClass('green');
-            break;
-        case 5:
-            $('#statusHeader_status').html("single").addClass('red');
-            $('#statusHeader_status').removeClass('green');
-            $('#statusHeader_status').removeClass('yellow');
-            break;
-    }
+function setupKeyBindings() {
+    global.window.onkeypress = function(key) {
+        global.console.log(key);
 
-    $('#statusHeader_sat').html(pos.numSat);
-    $('#statusHeader_lat').html(pos.lat);
-    $('#statusHeader_lon').html(pos.lon);
+        if (key.ctrlKey) {
+            switch (key.charCode) {
+                case 18: // ctrl + r
+                    if (key.shiftKey) {
+                        global.win.reloadDev();
+                    } else {
+                        global.win.reload();
+                    }
+                    break;
+                case 11: // ctrl + k toogle kiosk mode
+                    global.win.toggleKioskMode();
+                    break;
+                case 4: // ctrl + d open/close dev-tools
+                    if (global.win.isDevToolsOpen()) {
+                        global.win.closeDevTools();
+                    } else {
+                        global.win.showDevTools();
+                    }
+                    break;
+                case 2: // ctrl + b move driveline left
+                    moveDriveLineLeft((key.shiftKey) ? 100 : 1); //if shift move faster
+                    break;
+                case 14: // ctrl + n move driveline right
+                    moveDriveLineRight((key.shiftKey) ? 100 : 1);
+                    break;
+                case 23: // ctrl + shift + w
+                    if (key.shiftKey) $('#btnGpsStartPoint').click();
+                    break;
+                case 5: // ctrl + shift + e
+                    if (key.shiftKey) $('#btnGpsEndPoint').click();
+                    break;
+                case 15: // ctrl + shift + o
+                    if (key.shiftKey) $('#btnGpsUseCompass').click();
+                    break;
+            }
 
-
-}
-
-global.win.on('resize', setPositionOnResize);
-
-function setPositionOnResize () {
-    var ctrlPos = global.win.width - 110;
-    var mapWidth = global.win.width - 62;
-    var mapHeight = global.win.height - 120;
-    $('#settings').css('left',ctrlPos);
-    $('#page').css('width',mapWidth);
-    $('#map').css('height',mapHeight);
-}
-
-function setupGuiElements () {
-    $('.footerBtn').addClass("ui-button ui-widget ui-state-default ui-button-text-only");
-    $('.footerBtn').hover(function(){
-        $('.footerBtn').addClass("ui-state-hover");
-    }, function(){
-        $('.footerBtn').removeClass("ui-state-hover");
-    });
+        } else {
+            switch (key.charCode) {
+                case 97: // a switch active driveline left
+                    switchDriveLineLeft();
+                    break;
+                case 109: // m toggle show wms map
+                    $('#btnToogleMapShowWMS').click();
+                    break;
+                case 115: //s switch active driveline right
+                    switchDriveLineRight();
+                    break;
+                case 122: //z toggle autocenter
+                    $('#btnToogleMapAutoCenter').click();
+                    break;
+            }
+        }
+    };
 }
 
 // function setupMenu() {
