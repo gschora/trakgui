@@ -70,7 +70,7 @@ function setupCfg() {
     if (global.cfg.driveLineListSide === undefined) global.cfg.driveLineListSide = 0;
     if (global.cfg.driveLineListIndexCurrent === undefined) global.cfg.driveLineListIndexCurrent = -1;
 
-    if(localStorage.driveLineArea !== undefined){
+    if (localStorage.driveLineArea !== undefined) {
         $('#statusHeader_driveLineArea').html(localStorage.driveLineArea);
     }
 
@@ -105,11 +105,17 @@ function autoReloadPage() {
  * ctrl + shift + b     move driveline left slow
  * ctrl + n             move driveline right fast
  * ctrl + shift + n     move driveline right slow
+ * ctrl + shift + w     set driveLine startpoint gps
+ * ctrl + shift + e     set driveLine endpoint gps
+ * m                    toggle showMap wms
+ * a                    switch active driveline left
+ * s                    switch active driveline right
+ * z                    toggle auto center
  */
 
 function setupKeyBindings() {
     global.window.onkeypress = function(key) {
-        // global.console.log(key);
+        global.console.log(key);
 
         if (key.ctrlKey) {
             switch (key.charCode) {
@@ -136,15 +142,30 @@ function setupKeyBindings() {
                 case 14: // ctrl + n move driveline right
                     moveDriveLineRight((key.shiftKey) ? 100 : 1);
                     break;
+                case 23: // ctrl + shift + w
+                    if (key.shiftKey) $('#btnGpsStartPoint').click();
+                    break;
+                case 5: // ctrl + shif + e
+                    if (key.shiftKey) $('#btnGpsEndPoint').click();
+                    break;
+                case 15: // ctrl + shif + o
+                    if (key.shiftKey) $('#btnGpsUseCompass').click();
+                    break;
             }
 
         } else {
             switch (key.charCode) {
-                case 97:
+                case 97: // a switch active driveline left
                     switchDriveLineLeft();
                     break;
-                case 115:
+                case 109: // m toggle show wms map
+                    $('#btnToogleMapShowWMS').click();
+                    break;
+                case 115: //s switch active driveline right
                     switchDriveLineRight();
+                    break;
+                case 122: //z toggle autocenter
+                    $('#btnToogleMapAutoCenter').click();
                     break;
             }
         }

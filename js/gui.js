@@ -28,6 +28,9 @@ function setupGuiElements() {
     setupBtnToogleMapShowWMS();
     setupBtnGpsUseCompass();
     setupBtnSetDriveLineManual();
+    setupBtnActiveDriveLineDelete();
+    setupbtnGpsStartPoint();
+    setupbtnGpsEndPoint()
 
     setupSettingsAccordion();
 }
@@ -177,6 +180,26 @@ function setupBtnSetDriveLineManual() {
         } else {
             featureCtrl.deactivate();
         }
+    });
+}
+
+function setupbtnGpsStartPoint() {
+    $('#btnGpsStartPoint').click(function() {
+        setDriveLineStartGPS();
+    });
+
+}
+
+function setupbtnGpsEndPoint() {
+    $('#btnGpsEndPoint').click(function() {
+        setDriveLineEndGPS();
+    });
+
+}
+
+function setupBtnActiveDriveLineDelete() {
+    $('#btnActiveDriveLineDelete').click(function() {
+        deleteDriveLine();
     });
 }
 

@@ -1,5 +1,6 @@
 var initMap = true;
 var zoomLevel = 11;
+var currentPositionPoint;
 
 /**
  * auto sets up the map on the site
@@ -250,6 +251,7 @@ function drawCurrentPosition(pos) {
     }
 
     global.mapFeatures.line_currentPosition.addPoint(realpoint);
+    currentPositionPoint = realpoint;
 
     if (global.mapFeatures.line_currentPosition.components.length > 100) {
         global.mapFeatures.line_currentPosition.removePoint(global.mapFeatures.line_currentPosition.components[0]);
@@ -340,44 +342,70 @@ function setDriveLineStartStop(point) {
         global.mapFeatures.point_startPoint = point.geometry;
 
     } else if (global.mapFeatures.point_endPoint === undefined) {
-        // if startpoint is set set the endpoint and create the driveline
-        // 
-        // clear all other features, points, lines
-        global.mapLayers.vector_driveLine.removeAllFeatures();
+        // if startpoint is set, set the endpoint and create the driveline
+
         // sets new endpoint
         global.mapFeatures.point_endPoint = point.geometry;
         // global.console.log(global.mapFeatures.point_endPoint);
-        if (global.mapFeatures.point_startPoint !== undefined) {
-            // make new driveline
-            global.mapFeatures.line_driveLine = new OpenLayers.Geometry.LineString([global.mapFeatures.point_startPoint, global.mapFeatures.point_endPoint]);
-            // set driveline middle
-            global.mapFeatures.driveLineListMiddle = global.mapFeatures.line_driveLine;
-            // make new vector for the driveline
-            global.mapFeatures.vector_driveLine = new OpenLayers.Feature.Vector(global.mapFeatures.line_driveLine);
-            global.mapFeatures.vector_driveLine.fid = "M";
-            // add the feature to the layer
-            global.mapLayers.vector_driveLine.addFeatures([global.mapFeatures.vector_driveLine]);
-            // set driveline list side, index and last active line
-            global.cfg.driveLineListSide = 0;
-            global.cfg.driveLineListIndexCurrent = -1;
-            // clear old drivelinelists
-            global.mapFeatures.driveLineListLeft.length = 0;
-            global.mapFeatures.driveLineListRight.length = 0;
-            global.cfg.driveLineLastActive = undefined;
-            //delete all drivelines from localstorage
-            clearDriveLineListsLocalStorage();
-            //add driveline to localstorage
-            saveGeoJSONString(global.mapFeatures.line_driveLine);
-            // creates helper points
-            setDriveLine(global.mapFeatures.line_driveLine);
+        setDriveLineNew();
 
-            localStorage.removeItem("driveLineArea");
-            getDriveLineArea();
-        }
     } else {
         // if the start-point and endpoint are set, asume this is the new startpoint and delete endpoint
         global.mapFeatures.point_startPoint = point.geometry;
         global.mapFeatures.point_endPoint = undefined;
+    }
+}
+
+function setDriveLineStartGPS() {
+    if (currentPositionPoint !== undefined) {
+        // clear all other features, points, lines
+        global.mapLayers.vector_driveLine.removeAllFeatures();
+        global.mapFeatures.point_startPoint = currentPositionPoint;
+        global.mapLayers.vector_driveLine.addFeatures([new OpenLayers.Feature.Vector(global.mapFeatures.point_startPoint)]);
+        global.mapLayers.vector_driveLine.redraw();
+    }
+}
+
+function setDriveLineEndGPS() {
+    if (currentPositionPoint !== undefined) {
+        global.mapFeatures.point_endPoint = currentPositionPoint;
+        global.mapLayers.vector_driveLine.addFeatures([new OpenLayers.Feature.Vector(global.mapFeatures.point_endPoint)]);
+        global.mapLayers.vector_driveLine.redraw();
+        setDriveLineNew();
+    }
+}
+
+
+function setDriveLineNew() {
+    // clear all other features, points, lines
+    global.mapLayers.vector_driveLine.removeAllFeatures();
+
+    if (global.mapFeatures.point_startPoint !== undefined) {
+        // make new driveline
+        global.mapFeatures.line_driveLine = new OpenLayers.Geometry.LineString([global.mapFeatures.point_startPoint, global.mapFeatures.point_endPoint]);
+        // set driveline middle
+        global.mapFeatures.driveLineListMiddle = global.mapFeatures.line_driveLine;
+        // make new vector for the driveline
+        global.mapFeatures.vector_driveLine = new OpenLayers.Feature.Vector(global.mapFeatures.line_driveLine);
+        global.mapFeatures.vector_driveLine.fid = "M";
+        // add the feature to the layer
+        global.mapLayers.vector_driveLine.addFeatures([global.mapFeatures.vector_driveLine]);
+        // set driveline list side, index and last active line
+        global.cfg.driveLineListSide = 0;
+        global.cfg.driveLineListIndexCurrent = -1;
+        // clear old drivelinelists
+        global.mapFeatures.driveLineListLeft.length = 0;
+        global.mapFeatures.driveLineListRight.length = 0;
+        global.cfg.driveLineLastActive = undefined;
+        //delete all drivelines from localstorage
+        clearDriveLineListsLocalStorage();
+        //add driveline to localstorage
+        saveGeoJSONString(global.mapFeatures.line_driveLine);
+        // creates helper points
+        setDriveLine(global.mapFeatures.line_driveLine);
+
+        localStorage.removeItem("driveLineArea");
+        getDriveLineArea();
     }
 }
 
@@ -623,6 +651,49 @@ function newDriveLineRight() {
     setDriveLine(driveLineRight);
     getDriveLineArea();
 }
+var f;
+
+function deleteDriveLine() {
+    var lineFeature;
+    switch (global.cfg.driveLineListSide) {
+        case 1:
+            lineFeature = global.mapLayers.vector_driveLine.getFeatureByFid("L" + global.cfg.driveLineListIndexCurrent);
+            updateFeatureFID(lineFeature);
+            global.mapFeatures.driveLineListLeft.splice(global.cfg.driveLineListIndexCurrent, 1);
+            // global.console.log(global.mapFeatures.driveLineListLeft);
+            switchDriveLineRight();
+            break;
+        case 2:
+            lineFeature = global.mapLayers.vector_driveLine.getFeatureByFid("R" + global.cfg.driveLineListIndexCurrent);
+            updateFeatureFID(lineFeature);
+            global.mapFeatures.driveLineListRight.splice(global.cfg.driveLineListIndexCurrent, 1);
+            switchDriveLineLeft();
+            break;
+    }
+    // global.mapLayers.vector_driveLine.removeFeatures(lineFeature);
+    // f = lineFeature;
+    // global.console.log(lineFeature.fid);
+}
+
+function updateFeatureFID(lineFeature) {
+    switch (global.cfg.driveLineListSide) {
+        case 1:
+            var listLeft = global.mapFeatures.driveLineListLeft;
+            for (var i = listLeft.length - 1; i > global.cfg.driveLineListIndexCurrent; i--) {
+                var itemLeft = global.mapLayers.vector_driveLine.getFeatureByFid("L" + i);
+                itemLeft.fid = "L" + (i - 1);
+            }
+            break;
+        case 2:
+            var listRight = global.mapFeatures.driveLineListRight;
+            for (var j = listRight.length - 1; j > global.cfg.driveLineListIndexCurrent; j--) {
+                var itemRight = global.mapLayers.vector_driveLine.getFeatureByFid("R" + j);
+                itemRight.fid = "R" + (j - 1);
+            }
+            break;
+    }
+    global.mapLayers.vector_driveLine.removeFeatures(lineFeature);
+}
 
 function saveGeoJSONString(line) {
     var w = new OpenLayers.Format.GeoJSON();
@@ -750,37 +821,36 @@ function unselectLine() {
 }
 
 function getDriveLineArea() {
-    var p1,p2, ring = new OpenLayers.Geometry.LinearRing();
+    var p1, p2, ring = new OpenLayers.Geometry.LinearRing();
 
     if (global.mapFeatures.driveLineListLeft.length > 0) {
         p1 = global.mapFeatures.driveLineListLeft[global.mapFeatures.driveLineListLeft.length - 1].components[0];
-        ring.addComponent(new OpenLayers.Geometry.Point(p1.x,p1.y));
+        ring.addComponent(new OpenLayers.Geometry.Point(p1.x, p1.y));
         p2 = global.mapFeatures.driveLineListLeft[global.mapFeatures.driveLineListLeft.length - 1].components[1];
-        ring.addComponent(new OpenLayers.Geometry.Point(p2.x,p2.y));
+        ring.addComponent(new OpenLayers.Geometry.Point(p2.x, p2.y));
     }
     if (global.mapFeatures.driveLineListRight.length > 0) {
-        p1 =  global.mapFeatures.driveLineListRight[global.mapFeatures.driveLineListRight.length - 1].components[1];
-        ring.addComponent(new OpenLayers.Geometry.Point(p1.x,p1.y));
+        p1 = global.mapFeatures.driveLineListRight[global.mapFeatures.driveLineListRight.length - 1].components[1];
+        ring.addComponent(new OpenLayers.Geometry.Point(p1.x, p1.y));
         p2 = global.mapFeatures.driveLineListRight[global.mapFeatures.driveLineListRight.length - 1].components[0];
-        ring.addComponent(new OpenLayers.Geometry.Point(p2.x,p2.y));
+        ring.addComponent(new OpenLayers.Geometry.Point(p2.x, p2.y));
     }
     if (ring.components.length < 4) {
         p1 = global.mapFeatures.driveLineListMiddle.components[1];
-        ring.addComponent(new OpenLayers.Geometry.Point(p1.x,p1.y));
+        ring.addComponent(new OpenLayers.Geometry.Point(p1.x, p1.y));
         p2 = global.mapFeatures.driveLineListMiddle.components[0];
-        ring.addComponent(new OpenLayers.Geometry.Point(p2.x,p2.y));
+        ring.addComponent(new OpenLayers.Geometry.Point(p2.x, p2.y));
     }
     var area = ring.getGeodesicArea(new OpenLayers.Projection("EPSG:31287"));
-    if (area >=10000){
-        $('#statusHeader_driveLineArea').html((area/10000).toFixed(3)+" ha");
+    if (area >= 10000) {
+        $('#statusHeader_driveLineArea').html((area / 10000).toFixed(3) + " ha");
     } else {
-        $('#statusHeader_driveLineArea').html((area).toFixed()+" m²");
+        $('#statusHeader_driveLineArea').html((area).toFixed() + " m²");
     }
     localStorage.driveLineArea = $('#statusHeader_driveLineArea').html();
-    
+
     // var f = new OpenLayers.Feature.Vector(ring);
     // f.fid = "f";
     // global.mapLayers.vector_poi.addFeatures(f);
     // global.mapLayers.vector_poi.redraw();
 }
-
