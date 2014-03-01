@@ -11,7 +11,7 @@ function processRtklibData(data) {
             // global.console.log("process");
             drawCurrentPosition(currentRtklibPos); //map.js
         }
-        
+
         // global.console.log(currentRtklibPos);
 
     } catch (e) {}
@@ -30,10 +30,12 @@ function processRtklibData(data) {
  * monitor[5] = status quality 1 = fixed, 2 = float, 5 = single
  * monitor[6] = number of satelites
  * monitor[7] = standard deviation in m
- * 
+ *
  */
+
 function convertData(data) {
     if (data.toString().length > 1) {
+        var sensorData = getSensorData();// sensor.js
         var monitor = data.toString().trim().replace(/\s+/g, ",").split(",");
         var pos = {
             "lat": parseFloat(monitor[2]).toPrecision(11),
@@ -41,50 +43,12 @@ function convertData(data) {
             "height": parseFloat(monitor[4]),
             "status": parseInt(monitor[5]),
             "numSat": parseInt(monitor[6]),
-            "angle_compass": 0, //angle_compass,
-            "pitch_compass": 0, //pitch_compass,
-            "roll_compass": 0, //roll_compass,
-            "x_tilt": 0, //x_tilt,
-            "y_tilt": 0 //y_tilt
+            "angle_compass": parseFloat(sensorData.angle_compass), //angle_compass,
+            "pitch_compass": parseFloat(sensorData.pitch_compass), //pitch_compass,
+            "roll_compass": parseFloat(sensorData.roll_compass), //roll_compass,
+            "x_tilt": parseFloat(sensorData.x_tilt), //x_tilt,
+            "y_tilt": parseFloat(sensorData.y_tilt) //y_tilt
         };
         return pos;
     }
 }
-
-
-
-
-
-
-// processRtklibPosition();
-
-// function processRtklibPosition() {
-//     if (global.childRtklib !== undefined && rtklibConnect) {
-//         prcsPosClient = net.connect({
-//                 port: global.cfg.rtklibPort
-//             },
-//             function() { //'connect' listener
-//                 // try {
-//                 //     console.log('rtklib connected');
-//                 // } catch (e) {}
-//             });
-//         prcsPosClient.on('data', function(data) {
-//             convertData(data);
-//             try {
-//                 // console.log(data.toString());
-//             } catch (e) {}
-
-//             prcsPosClient.end();
-//         });
-//         prcsPosClient.on('error', function(code) {
-//             try {
-//                 console.log('error while trying to connect to rtklib: ' + code);
-//             } catch (e) {}
-//         });
-//     }
-//     // if (prcsPosClient === undefined) {
-//     setTimeout(function() {
-//         processRtklibPosition();
-//     }, 2000);
-
-// }

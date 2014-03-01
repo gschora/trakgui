@@ -451,6 +451,47 @@ function setDriveLine(line) {
 }
 
 /**
+ *#################################################################################################################################
+ *#################################################################################################################################
+ *#################################################################################################################################
+ *
+ * undbeding TODO:
+ * check ob ich distanceTo oder getGeodesic length verwenden muss für die Position und den Anbstand zur driveline, weil wenn ich
+ * mit distanceTo von den helperpoints zu dem endpunkt der driveline messe bekomme ich unterschiedliche längen!!!!
+ * d.h. die helperpoints sind verschoben?????????
+ *
+ *#################################################################################################################################
+ *#################################################################################################################################
+ * #################################################################################################################################
+ */
+
+function drivelineRect() {
+    var p1 = new OpenLayers.Geometry.Point(global.mapFeatures.point_helpPointLeft.x, global.mapFeatures.point_helpPointLeft.y);
+    var p2 = new OpenLayers.Geometry.Point(global.mapFeatures.point_helpPointRight.x, global.mapFeatures.point_helpPointRight.y);
+    var p3 = new OpenLayers.Geometry.Point(global.mapFeatures.line_driveLine.components[0].x, global.mapFeatures.line_driveLine.components[0].y);
+    var p4 = new OpenLayers.Geometry.Point(global.mapFeatures.line_driveLine.components[1].x, global.mapFeatures.line_driveLine.components[1].y);
+
+
+    var ls1 = new OpenLayers.Geometry.LineString([p1, p2]);
+    var ls2 = new OpenLayers.Geometry.LineString([p2, p3]);
+    var ls3 = new OpenLayers.Geometry.LineString([p3, p1]);
+    var ls4 = new OpenLayers.Geometry.LineString([p1, p4]);
+    var ls5 = new OpenLayers.Geometry.LineString([p4, p2]);
+
+    global.console.log(ls1.getLength().toFixed(5)+"|"+ls2.getLength().toFixed(5)+"|"+ls3.getLength().toFixed(5)+"|"+ls4.getLength().toFixed(5)+"|"+ls5.getLength().toFixed(5));
+    global.console.log(p1.distanceTo(p2).toFixed(5)+"|"+p2.distanceTo(p3).toFixed(5)+"|"+p3.distanceTo(p1).toFixed(5)+"|"+p1.distanceTo(p4).toFixed(5)+"|"+p4.distanceTo(p2).toFixed(5));
+
+    global.console.log("1:"+(p1.distanceTo(p3).toFixed(8)-p2.distanceTo(p3).toFixed(8))+"| 2:"+(p1.distanceTo(p4).toFixed(8)-p2.distanceTo(p4).toFixed(8)));
+    // global.console.log(ls1.getGeodesicLength().toFixed(5)+"|"+ls2.getGeodesicLength().toFixed(5)+"|"+ls3.getGeodesicLength().toFixed(5)+"|"+ls4.getGeodesicLength().toFixed(5)+"|"+ls5.getGeodesicLength().toFixed(5));
+
+    global.mapLayers.vector_driveLine.addFeatures([new OpenLayers.Feature.Vector(ls1),new OpenLayers.Feature.Vector(ls2),new OpenLayers.Feature.Vector(ls3),new OpenLayers.Feature.Vector(ls4),new OpenLayers.Feature.Vector(ls5),]);
+    global.mapLayers.vector_driveLine.redraw();
+
+}
+
+
+
+/**
  * checks if the distance from the helper-points is the same to the edge-points of the driveline
  * to see if the points are really
  * @return {[type]} [description]

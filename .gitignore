@@ -9,3 +9,4 @@ nwsnapshot.exe
 *.sublime-workspace
 stuff/
 tools/rtklib/
+js/node_modules/

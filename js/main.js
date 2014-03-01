@@ -50,6 +50,10 @@ function setupCfg() {
     global.cfg.rtklibStartArgs = localStorage.rtklibStartArgs.split(",");
     global.cfg.rtklibStatus = 0; //0 = not running, 1 = running but not started, 2 = tcp-server started
 
+    if (localStorage.sensorDevicePath === undefined) localStorage.sensorDevicePath = "192.168.1.104"; // /dev/serial/by-id/usb-FTDI_USB_Serial_Converter_FTFVL144-if00-port0
+    global.cfg.sensorDevicePath = localStorage.sensorDevicePath;
+
+
     if (localStorage.gpsUseCompass === undefined) localStorage.gpsUseCompass = true;
     if (localStorage.compassLineLength === undefined) localStorage.compassLineLength = 15;
     if (localStorage.driveLineMoveSpacing === undefined) localStorage.driveLineMoveSpacing = 10;
