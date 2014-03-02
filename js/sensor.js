@@ -8,14 +8,14 @@ var sensorData = {
     roll_compass: 0
 };
 
-jQuery.getScript("http://" + global.cfg.sensorDevicePath + ":" + global.cfg.sensorDevicePort + "/socket.io/socket.io.js")
+jQuery.getScript("http://" + global.cfg.sensorControlerHost + ":" + global.cfg.sensorControlerPort + "/socket.io/socket.io.js")
     .done(function() {
         connectSensor();
     });
 
 function connectSensor() {
-    sc = io.connect(global.cfg.sensorDevicePath, {
-        port: global.cfg.sensorDevicePort
+    sc = io.connect(global.cfg.sensorControlerHost, {
+        port: global.cfg.sensorControlerPort
     });
     sc.on('connect', function() {
         global.console.info("sensor connected");

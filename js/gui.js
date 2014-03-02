@@ -290,9 +290,19 @@ function setupSettingsTabSensor() {
         settingsInfo("sensor settings saved!");
     });
 
+    $('btnConnectCtrler').click(function() {
+        if (!sc.socket.connected) {
+            sc.socket.reconnect();
+        }
+    });
+
     $('#txtImuAntennaHeight').val(global.cfg.imuAntennaHeight);
     $('#txtImuAccelCalX').html(global.cfg.imuAccelCalX);
     $('#txtImuAccelCalY').html(global.cfg.imuAccelCalY);
+
+    $('#txtSensorControlerHost').val(global.cfg.sensorControlerHost);
+    $('#txtSensorControlerPort').val(global.cfg.sensorControlerPort);
+    $('#txtSensorDevicePath').val(global.cfg.sensorDevicePath);
 }
 
 function saveSettingsTabProgs() {
@@ -323,6 +333,11 @@ function saveSettingsTabSensor() {
     localStorage.imuAntennaHeight = global.cfg.imuAntennaHeight = parseInt($('#txtImuAntennaHeight').val());
     localStorage.imuAccelCalX = global.cfg.imuAccelCalX = parseFloat($('#txtImuAccelCalX').html());
     localStorage.imuAccelCalY = global.cfg.imuAccelCalY = parseFloat($('#txtImuAccelCalY').html());
+
+    localStorage.sensorControlerHost = global.cfg.sensorControlerHost = $('#txtSensorControlerHost').val();
+    localStorage.sensorControlerPort = global.cfg.sensorControlerPort = parseInt($('#txtSensorControlerPort').val());
+    localStorage.sensorDevicePath = global.cfg.sensorDevicePath = $('#txtSensorDevicePath').val();
+
     settingsInfo("all sensor settings saved...");
 }
 

@@ -764,7 +764,7 @@ function saveGeoJSONString(line) {
 function readGeoJSONString() {
     var v, r = new OpenLayers.Format.GeoJSON();
     //set the original driveline
-    if (global.mapFeatures.driveLineListMiddle === undefined) {
+    if (global.mapFeatures.driveLineListMiddle === undefined && localStorage.driveLineListMiddle !== undefined) {
         global.mapFeatures.driveLineListMiddle = r.read(localStorage.driveLineListMiddle.replace(/\\/g, ""), "Geometry");
         v2 = v = new OpenLayers.Feature.Vector(global.mapFeatures.driveLineListMiddle);
         v.fid = "M";
