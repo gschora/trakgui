@@ -339,7 +339,7 @@ var sensorTimer;
 
 function updateTxtImu() {
     var sensorData = getSensorData(true);
-    global.console.log(sensorData.x_tilt+":"+(sensorData.x_tilt-global.cfg.imuAccelCalX)+"|"+sensorData.y_tilt+":"+(sensorData.y_tilt-global.cfg.imuAccelCalY));
+    // global.console.log(sensorData.x_tilt+":"+(sensorData.x_tilt-global.cfg.imuAccelCalX)+"|"+sensorData.y_tilt+":"+(sensorData.y_tilt-global.cfg.imuAccelCalY));
     $('#txtImuAccelCalX').html(sensorData.x_tilt);
     $('#txtImuAccelCalY').html(sensorData.y_tilt);
     $('#txtImuCompassAngle').html(sensorData.angle_compass);

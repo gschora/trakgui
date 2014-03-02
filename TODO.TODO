@@ -1,0 +1,4 @@
+ ☐ on controler socket.io connect: get serialport status from child, if sp not connected send reconnect command to child
+ ☐ settings sensor btn restart controler
+ ☐ settings sensor btn reconnect sp
+ ☐ settins sensor btn for calibrating compass

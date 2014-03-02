@@ -1,3 +1,4 @@
+var u = require('util');
 var sc;
 var sensorData = {
     x_tilt: 0,
@@ -25,50 +26,50 @@ function connectSensor() {
         global.cfg.sensorConnected = false;
     });
     sc.on('cmdEcho', function(echo) {
-        global.console.log(echo);
+        global.console.log("sensor echo:"+u.inspect(echo));
     });
 
     sc.on('sensorData', function(data) {
-        // console.log(u.inspect(data));
+        // global.console.log(u.inspect(data));
         sensorData = data;
     });
 
 }
 
 function setSensorSpeed() {
-    sc.emit("command", {
+    sc.emit("sensorCmd", {
         cmd: "setSpeed",
         sensorSpeed: global.cfg.sensorSpeed
     });
 }
 
 function setSensorDevicePath() {
-    sc.emit("command", {
+    sc.emit("sensorCmd", {
         cmd: "setDevicePath",
         devicePath: global.cfg.sensorDevicePath
     });
 }
 
 function startSensor() {
-    sc.emit("command", {
+    sc.emit("sensorCmd", {
         cmd: "start"
     });
 }
 
 function stopSensor() {
-    sc.emit("command", {
+    sc.emit("sensorCmd", {
         cmd: "stop"
     });
 }
 
-function restartSensor() {
-    sc.emit("command", {
-        cmd: "restart"
+function reconnectSensor() {
+    sc.emit("sensorCmd", {
+        cmd: "reconnect"
     });
 }
 
 function calibrateSensor() {
-    sc.emit("command", {
+    sc.emit("sensorCmd", {
         cmd: "calibrate"
     });
 }
