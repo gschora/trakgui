@@ -68,15 +68,21 @@ mein zeugs
     margin-top: 22px;
     padding: 0px 5px 0px 5px;
 }
+.settingsBtn {
+    padding: 0px 5px 0px 5px;
+}
 .olMap {
     background-color: rgba(0, 0, 0, 0.6);
 }
 .olImageLoadError {
-background-color: rgba(255, 255, 255, 0.6) !important;
-} 
-
+    background-color: rgba(255, 255, 255, 0.6) !important;
+}
 .txtPath {
     width: 20%;
+}
+.txtLine {
+    width: 5%;
+    padding-left: 8px;
 }
 .txtPort {
     width: 6%;
@@ -89,29 +95,40 @@ background-color: rgba(255, 255, 255, 0.6) !important;
     width: 4%;
     text-align: right;
 }
-.txtStartArgs{
+.txtStartArgs {
     width: 20%;
 }
-.txtHost{
+.txtHost {
     width: 15%;
 }
-#btnSaveSettings{
+#btnSaveSettings {
     margin-left: 80%;
 }
-#settingsAlert{
-   margin-left: 30vw;
-   display:none;
+#settingsAlert {
+    margin-left: 30vw;
+    display:none;
 }
-
-#settingsPage input{
-    background-color: rgba(255,255,255,0.1);
+#settingsPage input {
+    background-color: rgba(255, 255, 255, 0.1);
     border: 1px solid white;
     font-weight: bold;
     color: white;
 }
-
-.settingsAlert{
+.settingsAlert {
     width: 30vw;
     height: 4vh;
     text-align: center;
+}
+.info {
+    border: 1px solid #0b93d5;
+    background: #003147 url(images/ui-bg_highlight-soft_33_003147_1x100.png) 50% 50% repeat-x;
+    font-weight: bold;
+    color: #ffffff;
+}
+
+.warn {
+    border: 1px solid  #EAF30E;
+    background:  #EAF30E 50% 50%;
+    font-weight: bold;
+    color: #ffffff;
 }

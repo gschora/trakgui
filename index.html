@@ -176,6 +176,28 @@
                 <h3>sensor</h3>
                 <div>
                     <h3>imu</h3>
+                    <span>Antennaheight:</span>
+                    <input id="txtImuAntennaHeight" class="txtSpacing" type="text">
+                    <span>cm</span>
+                    <div style='clear:both'>
+                        <div style='float: left'>imu offset X:</div>
+                        <div class='txtLine' style='float: left' id='txtImuAccelCalX'>0</div>
+                        <div style='float: left'>Y:</div>
+                        <div class='txtLine' style='float: left' id='txtImuAccelCalY'>0</div>
+                    </div>
+                    <div style='clear:both'>
+                        <div style='float: left'>compass pitch:</div>
+                        <div class='txtLine' style='float: left' id='txtImuCompassPitch'>0</div>
+                        <div style='float: left'>roll:</div>
+                        <div class='txtLine' style='float: left' id='txtImuCompassRoll'>0</div>
+                        <div style='float: left'>angle:</div>
+                        <div class='txtLine' style='float: left' id='txtImuCompassAngle'>0</div>
+                    </div>
+                    <div style='clear:both'>
+                        <button class='settingsBtn' id='btnCfgStartSensor'>start Sensor</button>
+                        <button class='settingsBtn' id='btnCfgResetSensor'>reset Sensor</button>
+                        <button class='settingsBtn' id='btnCfgSaveSensor'>save Sensor</button>
+                    </div>
                 </div>
             </div>
         </article>

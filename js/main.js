@@ -22,8 +22,8 @@ function setupCfg() {
     if (localStorage.imuAccelCalY === undefined) localStorage.imuAccelCalY = 0;
     if (localStorage.imuAntennaHeight === undefined) localStorage.imuAntennaHeight = 0;
 
-    global.cfg.imuAccelCalX = parseInt(localStorage.imuAccelCalX);
-    global.cfg.imuAccelCalY = parseInt(localStorage.imuAccelCalY);
+    global.cfg.imuAccelCalX = parseFloat(localStorage.imuAccelCalX);
+    global.cfg.imuAccelCalY = parseFloat(localStorage.imuAccelCalY);
     global.cfg.imuAntennaHeight = parseInt(localStorage.imuAntennaHeight);
     global.cfg.sensorConnected = false;
 

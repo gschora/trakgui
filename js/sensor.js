@@ -30,9 +30,7 @@ function connectSensor() {
 
     sc.on('sensorData', function(data) {
         // console.log(u.inspect(data));
-        if (global.cfg.gpsUseCompass) {
-            sensorData = data;
-        }
+        sensorData = data;
     });
 
 }
@@ -64,19 +62,21 @@ function stopSensor() {
 }
 
 function restartSensor() {
-	sc.emit("command", {
+    sc.emit("command", {
         cmd: "restart"
     });
 }
 
 function calibrateSensor() {
-	sc.emit("command", {
+    sc.emit("command", {
         cmd: "calibrate"
     });
 }
 
-function getSensorData() {
-    if (global.cfg.gpsUseCompass) {
+function getSensorData(now) {
+    if (now) {
+        return sensorData;
+    } else if (global.cfg.gpsUseCompass) {
         return sensorData;
     } else {
         return {

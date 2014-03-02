@@ -298,8 +298,8 @@ function setHomeCenter() {
 }
 
 function getRealCoords(originPoint, x_tilt, y_tilt, antennaHeight, compass_angle) {
-    var x_dist = calcAngleDist(x_tilt + global.cfg.imuAccelCalX, antennaHeight);
-    var y_dist = calcAngleDist(y_tilt + global.cfg.imuAccelCalY, antennaHeight);
+    var x_dist = calcAngleDist(x_tilt - global.cfg.imuAccelCalX, antennaHeight);
+    var y_dist = calcAngleDist(y_tilt - global.cfg.imuAccelCalY, antennaHeight);
     var destPoint = originPoint.clone();
     // global.console.log(x_dist + "|" + y_dist + "|" + antennaHeight + "|" + compass_angle);
     destPoint.move(x_dist, y_dist);
@@ -310,7 +310,7 @@ function getRealCoords(originPoint, x_tilt, y_tilt, antennaHeight, compass_angle
 
 function calcAngleDist(angle, height) {
     // global.console.log(angle +"|"+height);
-    return (Math.sin(angle * (Math.PI / 180)) * height); //Math.sin in JS ist in Radian deshalb die Formel mit Math.PI/180 multiplizieren!!!!
+    return (Math.sin(angle * (Math.PI / 180)) * (height/100)); //Math.sin in JS ist in Radian deshalb die Formel mit Math.PI/180 multiplizieren!!!!
 }
 
 function moveCompassLine(destPoint, angle) {

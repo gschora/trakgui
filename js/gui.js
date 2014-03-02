@@ -23,6 +23,7 @@ function setPositionOnResize() {
 
 function setupGuiElements() {
     styleBtnMapFooter();
+    styleBtnSettings();
     setPositionOnResize();
     setupBtnToogleMapAutoCenter();
     setupBtnToogleMapShowWMS();
@@ -93,6 +94,15 @@ function styleBtnMapFooter() {
     });
 }
 
+function styleBtnSettings() {
+    $('.settingsBtn').addClass("ui-button ui-widget ui-state-default ui-button-text-only");
+    $('.settingsBtn').hover(function() {
+        $(this).addClass("ui-state-hover");
+    }, function() {
+        $(this).removeClass("ui-state-hover");
+    });
+}
+
 /**
  * sets up autocenterToogle-Button function
  */
@@ -157,6 +167,7 @@ function setupBtnGpsUseCompass() {
     }
 
     $('#btnGpsUseCompass').click(function() {
+            // if (global.cfg.sensorConnected) {
             if (global.cfg.gpsUseCompass) {
                 $('#btnGpsUseCompass').removeClass("ui-state-active");
                 global.mapLayers.vector_compass.setVisibility(false);
@@ -166,8 +177,8 @@ function setupBtnGpsUseCompass() {
                 global.mapLayers.vector_compass.setVisibility(true);
                 global.cfg.gpsUseCompass = true;
             }
-
         }
+        // }
 
     );
 }
@@ -215,10 +226,12 @@ function setupSettingsAccordion() {
     $('#btnSaveSettings').click(function() {
         saveSettingsTabProgs();
         saveSettingsTabOptions();
+        saveSettingsTabSensor();
     });
 
     setupSettingsTabPrograms();
     setupSettingsTabOptions();
+    setupSettingsTabSensor();
 
 }
 
@@ -242,6 +255,44 @@ function setupSettingsTabOptions() {
     $('#chkShowWmsLayer').prop('checked', global.cfg.mapShowWMSLayer);
     $('#txtDriveLineMoveSpacing').val(global.cfg.driveLineMoveSpacing);
     $('#txtDriveLineSpacing').val(global.cfg.driveLineSpacing);
+}
+
+function setupSettingsTabSensor() {
+    $('#btnCfgStartSensor').click(function() {
+        if (btnSensorDataState) {
+            btnSensorDataState = false;
+            $('#btnCfgStartSensor').removeClass("ui-state-active");
+            clearTimeout(sensorTimer);
+            if (!global.cfg.gpsUseCompass) {
+                stopSensor();
+            }
+        } else {
+            if (global.cfg.sensorConnected) {
+                btnSensorDataState = true;
+                $('#btnCfgStartSensor').addClass("ui-state-active");
+                startSensor();
+                updateTxtImu();
+            } else {
+                settingsInfo("sensor NOT connected!!!");
+            }
+        }
+    });
+
+    $('#btnCfgResetSensor').click(function() {
+        global.cfg.imuAccelCalX = 0;
+        global.cfg.imuAccelCalY = 0;
+        $('#txtImuAccelCalX').html(global.cfg.imuAccelCalX);
+        $('#txtImuAccelCalY').html(global.cfg.imuAccelCalY);
+    });
+    $('#btnCfgSaveSensor').click(function() {
+        localStorage.imuAccelCalX = global.cfg.imuAccelCalX = parseFloat($('#txtImuAccelCalX').html());
+        localStorage.imuAccelCalY = global.cfg.imuAccelCalY = parseFloat($('#txtImuAccelCalY').html());
+        settingsInfo("sensor settings saved!");
+    });
+
+    $('#txtImuAntennaHeight').val(global.cfg.imuAntennaHeight);
+    $('#txtImuAccelCalX').html(global.cfg.imuAccelCalX);
+    $('#txtImuAccelCalY').html(global.cfg.imuAccelCalY);
 }
 
 function saveSettingsTabProgs() {
@@ -268,9 +319,31 @@ function saveSettingsTabOptions() {
     settingsInfo("all option settings saved...");
 }
 
+function saveSettingsTabSensor() {
+    localStorage.imuAntennaHeight = global.cfg.imuAntennaHeight = parseInt($('#txtImuAntennaHeight').val());
+    localStorage.imuAccelCalX = global.cfg.imuAccelCalX = parseFloat($('#txtImuAccelCalX').html());
+    localStorage.imuAccelCalY = global.cfg.imuAccelCalY = parseFloat($('#txtImuAccelCalY').html());
+    settingsInfo("all sensor settings saved...");
+}
 
 
-function settingsInfo(infoText) {
+
+function settingsInfo(infoText, msgType) {
+
     $('#settingsAlert').html(infoText);
     $('#settingsAlert').toggle("fade", 200).toggle("fade", 2000);
+}
+
+var btnSensorDataState = false;
+var sensorTimer;
+
+function updateTxtImu() {
+    var sensorData = getSensorData(true);
+    global.console.log(sensorData.x_tilt+":"+(sensorData.x_tilt-global.cfg.imuAccelCalX)+"|"+sensorData.y_tilt+":"+(sensorData.y_tilt-global.cfg.imuAccelCalY));
+    $('#txtImuAccelCalX').html(sensorData.x_tilt);
+    $('#txtImuAccelCalY').html(sensorData.y_tilt);
+    $('#txtImuCompassAngle').html(sensorData.angle_compass);
+    $('#txtImuCompassPitch').html(sensorData.pitch_compass);
+    $('#txtImuCompassRoll').html(sensorData.roll_compass);
+    sensorTimer = setTimeout(updateTxtImu, global.cfg.sensorSpeed);
 }
