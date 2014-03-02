@@ -25,6 +25,7 @@ function setupCfg() {
     global.cfg.imuAccelCalX = parseInt(localStorage.imuAccelCalX);
     global.cfg.imuAccelCalY = parseInt(localStorage.imuAccelCalY);
     global.cfg.imuAntennaHeight = parseInt(localStorage.imuAntennaHeight);
+    global.cfg.sensorConnected = false;
 
     global.win = gui.Window.get();
     global.pageReloaded = true; //shows if page is reloaded
@@ -52,6 +53,10 @@ function setupCfg() {
 
     if (localStorage.sensorDevicePath === undefined) localStorage.sensorDevicePath = "192.168.1.104"; // /dev/serial/by-id/usb-FTDI_USB_Serial_Converter_FTFVL144-if00-port0
     global.cfg.sensorDevicePath = localStorage.sensorDevicePath;
+    if (localStorage.sensorDevicePort === undefined) localStorage.sensorDevicePort = 8010; // /dev/serial/by-id/usb-FTDI_USB_Serial_Converter_FTFVL144-if00-port0
+    global.cfg.sensorDevicePort = localStorage.sensorDevicePort;
+    if (localStorage.sensorSpeed === undefined) localStorage.sensorSpeed = 500;
+    global.cfg.sensorSpeed = parseInt(localStorage.sensorSpeed);
 
 
     if (localStorage.gpsUseCompass === undefined) localStorage.gpsUseCompass = true;

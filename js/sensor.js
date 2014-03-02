@@ -7,62 +7,72 @@ var sensorData = {
     roll_compass: 0
 };
 
-(function() {
-    setupSensor();
-    setSensorSpeed();
-})();
+jQuery.getScript("http://" + global.cfg.sensorDevicePath + ":" + global.cfg.sensorDevicePort + "/socket.io/socket.io.js")
+    .done(function() {
+        connectSensor();
+    });
 
-function setupSensor() {
-    var fork = require('child_process').fork;
-    sc = fork('./compass.js', [global.cfg.sensorDevicePath], {
-        execPath: 'C:\\Proggis\\PortableApps\\nodist\\bin\\node.exe',
-        silent: true
-    }); 
-    sc.on("message", function(m) {
-        sensorData = m;
+function connectSensor() {
+    sc = io.connect(global.cfg.sensorDevicePath, {
+        port: global.cfg.sensorDevicePort
     });
-    sc.on('error', function(m) {
-        global.console.log(m);
+    sc.on('connect', function() {
+        global.console.info("sensor connected");
+        global.cfg.sensorConnected = true;
     });
-    sc.on("exit", function(m) {
-        global.console.log("sc exit " + m);
+    sc.on('disconnect', function() {
+        global.console.info("sensor disconnected");
+        global.cfg.sensorConnected = false;
     });
-    sc.on("disconnect", function(m) {
-        global.console.log("sc disconnect " + m);
+    sc.on('cmdEcho', function(echo) {
+        global.console.log(echo);
+    });
+
+    sc.on('sensorData', function(data) {
+        // console.log(u.inspect(data));
+        if (global.cfg.gpsUseCompass) {
+            sensorData = data;
+        }
     });
 
 }
 
 function setSensorSpeed() {
-    sc.send({
-        command: "setSpeed",
-        speed: global.cfg.sensorSpeed
+    sc.emit("command", {
+        cmd: "setSpeed",
+        sensorSpeed: global.cfg.sensorSpeed
     });
 }
 
-function setDevicePath() {
-    sc.send({
-        command: "setDevicePath",
-        path: global.cfg.sensorDevicePath
+function setSensorDevicePath() {
+    sc.emit("command", {
+        cmd: "setDevicePath",
+        devicePath: global.cfg.sensorDevicePath
     });
 }
 
 function startSensor() {
-    sc.send({
-        command: "start"
+    sc.emit("command", {
+        cmd: "start"
     });
 }
 
 function stopSensor() {
-    sc.send({
-        command: "stop"
+    sc.emit("command", {
+        cmd: "stop"
     });
 }
 
 function restartSensor() {
-    sc.kill(2);
-    setupSensor();
-    setSensorSpeed();
+	sc.emit("command", {
+        cmd: "restart"
+    });
+}
+
+function calibrateSensor() {
+	sc.emit("command", {
+        cmd: "calibrate"
+    });
 }
 
 function getSensorData() {
