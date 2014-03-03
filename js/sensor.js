@@ -7,11 +7,26 @@ var sensorData = {
     pitch_compass: 0,
     roll_compass: 0
 };
+(function() {
+    loadIO();
+})();
+var ioTo;
 
-jQuery.getScript("http://" + global.cfg.sensorControlerHost + ":" + global.cfg.sensorControlerPort + "/socket.io/socket.io.js")
-    .done(function() {
-        connectSensor();
-    });
+function loadIO() {
+    jQuery.getScript("http://" + global.cfg.sensorControlerHost + ":" + global.cfg.sensorControlerPort + "/socket.io/socket.io.js")
+        .done(function() {
+            connectSensor();
+            if (ioTo !== undefined) {
+                clearTimeout(ioTo);
+            }
+        })
+        .fail(function(jqxhr, settings, exception) {
+            if (global.cfg.gpsUseCompass) {
+                $('#btnGpsUseCompass').click();
+            }
+            ioTo = setTimeout(loadIO, 10000);
+        });
+}
 
 function connectSensor() {
     sc = io.connect(global.cfg.sensorControlerHost, {
@@ -19,6 +34,7 @@ function connectSensor() {
     });
     sc.on('connect', function() {
         global.console.info("sensor connected");
+        setSensorSpeed();
         global.cfg.sensorConnected = true;
     });
     sc.on('disconnect', function() {
@@ -26,7 +42,7 @@ function connectSensor() {
         global.cfg.sensorConnected = false;
     });
     sc.on('cmdEcho', function(echo) {
-        global.console.log("sensor echo:"+u.inspect(echo));
+        global.console.log("sensor echo:" + u.inspect(echo));
     });
 
     sc.on('sensorData', function(data) {
@@ -36,10 +52,10 @@ function connectSensor() {
 
 }
 
-function setSensorSpeed() {
+function setSensorSpeed(val) {
     sc.emit("sensorCmd", {
         cmd: "setSpeed",
-        sensorSpeed: global.cfg.sensorSpeed
+        sensorSpeed: (val === undefined) ? global.cfg.imuSensorSpeed : parseInt(val)
     });
 }
 

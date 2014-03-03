@@ -6,6 +6,7 @@ var sensorDevicePath = "/dev/serial/by-id/usb-FTDI_USB_Serial_Converter_FTFVL144
 var con = false;
 var init = false;
 var sp;
+var heartbeatTime = Date.now();
 
 var serialport = require("serialport");
 var SerialPort = serialport.SerialPort;
@@ -46,6 +47,9 @@ process.on('message', function(msg) {
         case "calibrate":
             sendCmdEcho("calibrate ok");
             calibrate();
+            break;
+        case "heartbeat":
+            heartbeatTime = Date.now();
             break;
     }
 });
@@ -240,14 +244,29 @@ var to;
 function countdown() {
     console.log("sec: " + cd--);
 
-    if (cd <= 0) {
+    if (cd < 0) {
         clearTimeout(to);
+        cd = 60;
+        calSide = 0;
+        sendCmdEcho("Timeout!!! please restart calibration!");
+        console.log("Timeout!!! please restart calibration!");
 
     } else {
         to = setTimeout(countdown, 1000);
     }
 }
 
+/**
+ * checks if parent process is running, and kills itself if not
+ */
+
+function checkHeartBeat() {
+    if ((Date.now() - heartbeatTime) > 20000) {
+        process.exit();
+    }
+    setTimeout(checkHeartBeat, 20000);
+}
+checkHeartBeat();
 setupSerialPort();
 /**
  * loop for getting sensor data with sensorspeed

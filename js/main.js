@@ -57,8 +57,8 @@ function setupCfg() {
     global.cfg.sensorControlerHost = localStorage.sensorControlerHost;
     if (localStorage.sensorControlerPort === undefined) localStorage.sensorControlerPort = 8010; // /dev/serial/by-id/usb-FTDI_USB_Serial_Converter_FTFVL144-if00-port0
     global.cfg.sensorControlerPort = localStorage.sensorControlerPort;
-    if (localStorage.sensorSpeed === undefined) localStorage.sensorSpeed = 500;
-    global.cfg.sensorSpeed = parseInt(localStorage.sensorSpeed);
+    if (localStorage.imuSensorSpeed === undefined) localStorage.imuSensorSpeed = 500;
+    global.cfg.imuSensorSpeed = parseInt(localStorage.imuSensorSpeed);
 
 
     if (localStorage.gpsUseCompass === undefined) localStorage.gpsUseCompass = true;

@@ -8,7 +8,8 @@
     <link rel="stylesheet" type="text/css" href="assets/styles/style.css" media="screen">
     <link rel="stylesheet" type="text/css" href="assets/styles/style-carbon.css" media="screen">
     <link rel="stylesheet" type="text/css" href="assets/jqui/css/dark-hive/jquery-ui-1.10.4.custom.css">
-    <script type="text/javascript" src="assets/jqui/jquery-1.10.2.js"></script>
+    <!-- <script type="text/javascript" src="assets/jqui/jquery-1.10.2.js"></script> -->
+    <script type="text/javascript" src="assets/jqui/jquery-2.1.0.min.js"></script>
     <script type="text/javascript" src="assets/jqui/jquery-ui-1.10.4.custom.js"></script>
     <script type="text/javascript" src="assets/scripts/smoothscroll.js"></script>
     <script type="text/javascript" src="assets/scripts/navigation.js"></script>
@@ -129,16 +130,21 @@
                 <div>
                     <h3>imu</h3>
                     <div>
-                        <button class='settingsBtn' id='btnConnectCtrler'>connect Ctrler</button>
                         <div>
                             <span>ctrler host:</span>
                             <input id="txtSensorControlerHost" class="txtHost" type="text">
                             <span>port:</span>
                             <input id="txtSensorControlerPort" class="txtPort" type="text">
+                            <button class='btnSettings' style='padding:0px 5px 0px 5px;' id='btnConnectCtrler'>connect Ctrler</button>
                         </div>
                         <div>
                             <span>sensor device path:</span>
                             <input id="txtSensorDevicePath" class="txtPath" type="text">
+                        </div>
+                        <div>
+                            <span>sensor speed:</span>
+                            <input id="txtImuSensorSpeed" class="txtSpacing" type="text">
+                            <span>ms</span>
                         </div>
                     </div>
                     <div>
@@ -161,9 +167,26 @@
                         <div class='txtLine' style='float: left' id='txtImuCompassAngle'>0</div>
                     </div>
                     <div style='clear:both'>
-                        <button class='settingsBtn' id='btnCfgStartSensor'>start Sensor</button>
-                        <button class='settingsBtn' id='btnCfgResetSensor'>reset Sensor</button>
-                        <button class='settingsBtn' id='btnCfgSaveSensor'>save Sensor</button>
+                        <button class='btnSettings' style='padding:0px 5px 0px 5px;' id='btnCfgStartSensor'>start sensor</button>
+                        <button class='btnSettings' style='padding:0px 5px 0px 5px;' id='btnCfgResetSensor'>reset Accel offset</button>
+                        <button class='btnSettings' style='padding:0px 5px 0px 5px;' id='btnCfgSaveSensor'>save Accel offset</button>
+                        <button class='btnSettings' style='padding:0px 5px 0px 5px;' id='btnDialogSensorCalibrate'>calibrate compass</button>
+                    </div>
+                    <div style='display:none;' id='dialogSensorCalibration'>
+                        <div>
+                            <div>compass angle:</div>
+                            <div class='txtLine' id='dialogImuCompassAngle'>0</div>
+                            <br>
+                            <div id='dialogImuCompassTxt'>start calibrating by clicking start...</div>
+                            <div>
+                                <button style='padding:0px 5px 0px 5px' class='btnSettings' id='btnDialogCalibrateSensorStart'>start...</button>
+                            </div>
+                            <div style='margin-top: 7%'>
+                                <span>time left:</span>
+                                <span id='dialogImuCompassCountdownTxt'>60</span>
+                                <span>sec</span>
+                            </div>
+                        </div>
                     </div>
                 </div>
                 <h3>options</h3>
@@ -214,7 +237,6 @@
                         <input id="txtMapproxyPort" class="txtPort" type="text">
                     </div>
                 </div>
-
             </div>
         </article>
     </section>

@@ -4,6 +4,7 @@ var sock;
 
 (function() {
     startSensorChild();
+    heartbeat();
 })();
 
 /**
@@ -41,6 +42,7 @@ function startSensorChild() {
 
     sensorChild.on('close', function() {
         console.log("sensorChild close");
+        startSensorChild();
     });
 
     sensorChild.on('message', function(msg) {
@@ -79,7 +81,7 @@ function parseMsgToSensorChild(msg) {
 }
 
 function parseMsgFromSensorChild(msg) {
-	// console.log("rectrl: " + u.inspect(msg));
+    // console.log("rectrl: " + u.inspect(msg));
     if (sock !== undefined) {
         switch (msg.cmd) {
             case "cmdEcho":
@@ -90,4 +92,13 @@ function parseMsgFromSensorChild(msg) {
                 break;
         }
     }
+}
+
+function heartbeat () {
+    if(sensorChild !== undefined){
+        sensorChild.send({
+            cmd: "heartbeat"
+        });
+    }
+    setTimeout(heartbeat, 15000);
 }
