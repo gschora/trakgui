@@ -16,6 +16,9 @@ function loadIO() {
     jQuery.getScript("http://" + global.cfg.sensorControlerHost + ":" + global.cfg.sensorControlerPort + "/socket.io/socket.io.js")
         .done(function() {
             connectSensor();
+            if (global.cfg.gpsUseCompass) {
+                startSensor();
+            }
             if (ioTo !== undefined) {
                 clearTimeout(ioTo);
             }

@@ -243,7 +243,12 @@ function addMapCtrl() {
 function drawCurrentPosition(pos) {
     var realpoint;
     var newpoint = new OpenLayers.Geometry.Point(pos.lon, pos.lat).transform(new OpenLayers.Projection('EPSG:4326'), new OpenLayers.Projection('EPSG:31287'));
-
+    if (isNaN(newpoint.x)) {
+        global.console.log("newpoint x not valid");
+    }
+    if(isNaN(newpoint.y)){
+        global.console.log("newpoint y not valid");
+    }
     if (global.cfg.gpsUseCompass) {
         realpoint = getRealCoords(newpoint, pos.x_tilt, pos.y_tilt, global.cfg.imuAntennaHeight, pos.angle_compass);
     } else {
@@ -253,7 +258,7 @@ function drawCurrentPosition(pos) {
     global.mapFeatures.line_currentPosition.addPoint(realpoint);
     currentPositionPoint = realpoint;
 
-    if (global.mapFeatures.line_currentPosition.components.length > 100) {
+    if (global.mapFeatures.line_currentPosition.components.length > 10) {
         global.mapFeatures.line_currentPosition.removePoint(global.mapFeatures.line_currentPosition.components[0]);
     }
 
