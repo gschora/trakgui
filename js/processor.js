@@ -35,7 +35,7 @@ function processRtklibData(data) {
 
 function convertData(data) {
     if (data.toString().length > 1) {
-        var sensorData = getSensorData();// sensor.js
+        var sensorData = getSensorData(false);// sensor.js
         var monitor = data.toString().trim().replace(/\s+/g, ",").split(",");
         var pos = {
             "lat": parseFloat(monitor[2]).toPrecision(11),

@@ -68,15 +68,21 @@ mein zeugs
     margin-top: 22px;
     padding: 0px 5px 0px 5px;
 }
+.btnSettings {
+    padding: 0px 5px 0px 5px;
+}
 .olMap {
     background-color: rgba(0, 0, 0, 0.6);
 }
 .olImageLoadError {
-background-color: rgba(255, 255, 255, 0.6) !important;
-} 
-
+    background-color: rgba(255, 255, 255, 0.6) !important;
+}
 .txtPath {
     width: 20%;
+}
+.txtLine {
+    width: 5%;
+    padding-left: 8px;
 }
 .txtPort {
     width: 6%;
@@ -89,28 +95,26 @@ background-color: rgba(255, 255, 255, 0.6) !important;
     width: 4%;
     text-align: right;
 }
-.txtStartArgs{
+.txtStartArgs {
     width: 20%;
 }
-.txtHost{
+.txtHost {
     width: 15%;
 }
-#btnSaveSettings{
+#btnSaveSettings {
     margin-left: 80%;
 }
-#settingsAlert{
-   margin-left: 30vw;
-   display:none;
+#settingsAlert {
+    margin-left: 30vw;
+    display:none;
 }
-
-#settingsPage input{
-    background-color: rgba(255,255,255,0.1);
+#settingsPage input {
+    background-color: rgba(255, 255, 255, 0.1);
     border: 1px solid white;
     font-weight: bold;
     color: white;
 }
-
-.settingsAlert{
+.settingsAlert {
     width: 30vw;
     height: 4vh;
     text-align: center;

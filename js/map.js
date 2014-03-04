@@ -243,7 +243,12 @@ function addMapCtrl() {
 function drawCurrentPosition(pos) {
     var realpoint;
     var newpoint = new OpenLayers.Geometry.Point(pos.lon, pos.lat).transform(new OpenLayers.Projection('EPSG:4326'), new OpenLayers.Projection('EPSG:31287'));
-
+    if (isNaN(newpoint.x)) {
+        global.console.log("newpoint x not valid");
+    }
+    if(isNaN(newpoint.y)){
+        global.console.log("newpoint y not valid");
+    }
     if (global.cfg.gpsUseCompass) {
         realpoint = getRealCoords(newpoint, pos.x_tilt, pos.y_tilt, global.cfg.imuAntennaHeight, pos.angle_compass);
     } else {
@@ -253,7 +258,7 @@ function drawCurrentPosition(pos) {
     global.mapFeatures.line_currentPosition.addPoint(realpoint);
     currentPositionPoint = realpoint;
 
-    if (global.mapFeatures.line_currentPosition.components.length > 100) {
+    if (global.mapFeatures.line_currentPosition.components.length > 10) {
         global.mapFeatures.line_currentPosition.removePoint(global.mapFeatures.line_currentPosition.components[0]);
     }
 
@@ -298,8 +303,8 @@ function setHomeCenter() {
 }
 
 function getRealCoords(originPoint, x_tilt, y_tilt, antennaHeight, compass_angle) {
-    var x_dist = calcAngleDist(x_tilt + global.cfg.imuAccelCalX, antennaHeight);
-    var y_dist = calcAngleDist(y_tilt + global.cfg.imuAccelCalY, antennaHeight);
+    var x_dist = calcAngleDist(x_tilt - global.cfg.imuAccelCalX, antennaHeight);
+    var y_dist = calcAngleDist(y_tilt - global.cfg.imuAccelCalY, antennaHeight);
     var destPoint = originPoint.clone();
     // global.console.log(x_dist + "|" + y_dist + "|" + antennaHeight + "|" + compass_angle);
     destPoint.move(x_dist, y_dist);
@@ -310,7 +315,7 @@ function getRealCoords(originPoint, x_tilt, y_tilt, antennaHeight, compass_angle
 
 function calcAngleDist(angle, height) {
     // global.console.log(angle +"|"+height);
-    return (Math.sin(angle * (Math.PI / 180)) * height); //Math.sin in JS ist in Radian deshalb die Formel mit Math.PI/180 multiplizieren!!!!
+    return (Math.sin(angle * (Math.PI / 180)) * (height/100)); //Math.sin in JS ist in Radian deshalb die Formel mit Math.PI/180 multiplizieren!!!!
 }
 
 function moveCompassLine(destPoint, angle) {
@@ -764,7 +769,7 @@ function saveGeoJSONString(line) {
 function readGeoJSONString() {
     var v, r = new OpenLayers.Format.GeoJSON();
     //set the original driveline
-    if (global.mapFeatures.driveLineListMiddle === undefined) {
+    if (global.mapFeatures.driveLineListMiddle === undefined && localStorage.driveLineListMiddle !== undefined) {
         global.mapFeatures.driveLineListMiddle = r.read(localStorage.driveLineListMiddle.replace(/\\/g, ""), "Geometry");
         v2 = v = new OpenLayers.Feature.Vector(global.mapFeatures.driveLineListMiddle);
         v.fid = "M";

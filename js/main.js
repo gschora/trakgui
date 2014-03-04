@@ -22,8 +22,8 @@ function setupCfg() {
     if (localStorage.imuAccelCalY === undefined) localStorage.imuAccelCalY = 0;
     if (localStorage.imuAntennaHeight === undefined) localStorage.imuAntennaHeight = 0;
 
-    global.cfg.imuAccelCalX = parseInt(localStorage.imuAccelCalX);
-    global.cfg.imuAccelCalY = parseInt(localStorage.imuAccelCalY);
+    global.cfg.imuAccelCalX = parseFloat(localStorage.imuAccelCalX);
+    global.cfg.imuAccelCalY = parseFloat(localStorage.imuAccelCalY);
     global.cfg.imuAntennaHeight = parseInt(localStorage.imuAntennaHeight);
     global.cfg.sensorConnected = false;
 
@@ -43,7 +43,7 @@ function setupCfg() {
     if (localStorage.rtklibPath === undefined) localStorage.rtklibPath = 'tools\\rtklib\\rtknavi_mkl.exe';
     if (localStorage.rtklibPort === undefined) localStorage.rtklibPort = 8000;
     if (localStorage.rtklibMonitorPort === undefined) localStorage.rtklibMonitorPort = 52001;
-    if (localStorage.rtklibStartArgs === undefined) localStorage.rtklibStartArgs = "test,asdf";
+    if (localStorage.rtklibStartArgs === undefined) localStorage.rtklibStartArgs = "";
 
     global.cfg.rtklibPath = localStorage.rtklibPath;
     global.cfg.rtklibPort = parseInt(localStorage.rtklibPort);
@@ -51,12 +51,14 @@ function setupCfg() {
     global.cfg.rtklibStartArgs = localStorage.rtklibStartArgs.split(",");
     global.cfg.rtklibStatus = 0; //0 = not running, 1 = running but not started, 2 = tcp-server started
 
-    if (localStorage.sensorDevicePath === undefined) localStorage.sensorDevicePath = "192.168.1.104"; // /dev/serial/by-id/usb-FTDI_USB_Serial_Converter_FTFVL144-if00-port0
+    if (localStorage.sensorDevicePath === undefined) localStorage.sensorDevicePath = "/dev/serial/by-id/usb-FTDI_USB_Serial_Converter_FTFVL144-if00-port0"; // /dev/serial/by-id/usb-FTDI_USB_Serial_Converter_FTFVL144-if00-port0
     global.cfg.sensorDevicePath = localStorage.sensorDevicePath;
-    if (localStorage.sensorDevicePort === undefined) localStorage.sensorDevicePort = 8010; // /dev/serial/by-id/usb-FTDI_USB_Serial_Converter_FTFVL144-if00-port0
-    global.cfg.sensorDevicePort = localStorage.sensorDevicePort;
-    if (localStorage.sensorSpeed === undefined) localStorage.sensorSpeed = 500;
-    global.cfg.sensorSpeed = parseInt(localStorage.sensorSpeed);
+    if (localStorage.sensorControlerHost === undefined) localStorage.sensorControlerHost = "192.168.1.104"; // /dev/serial/by-id/usb-FTDI_USB_Serial_Converter_FTFVL144-if00-port0
+    global.cfg.sensorControlerHost = localStorage.sensorControlerHost;
+    if (localStorage.sensorControlerPort === undefined) localStorage.sensorControlerPort = 8010; // /dev/serial/by-id/usb-FTDI_USB_Serial_Converter_FTFVL144-if00-port0
+    global.cfg.sensorControlerPort = localStorage.sensorControlerPort;
+    if (localStorage.imuSensorSpeed === undefined) localStorage.imuSensorSpeed = 500;
+    global.cfg.imuSensorSpeed = parseInt(localStorage.imuSensorSpeed);
 
 
     if (localStorage.gpsUseCompass === undefined) localStorage.gpsUseCompass = true;

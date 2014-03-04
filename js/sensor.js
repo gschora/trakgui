@@ -1,3 +1,4 @@
+var u = require('util');
 var sc;
 var sensorData = {
     x_tilt: 0,
@@ -6,18 +7,37 @@ var sensorData = {
     pitch_compass: 0,
     roll_compass: 0
 };
+(function() {
+    loadIO();
+})();
+var ioTo;
 
-jQuery.getScript("http://" + global.cfg.sensorDevicePath + ":" + global.cfg.sensorDevicePort + "/socket.io/socket.io.js")
-    .done(function() {
-        connectSensor();
-    });
+function loadIO() {
+    jQuery.getScript("http://" + global.cfg.sensorControlerHost + ":" + global.cfg.sensorControlerPort + "/socket.io/socket.io.js")
+        .done(function() {
+            connectSensor();
+            if (global.cfg.gpsUseCompass) {
+                startSensor();
+            }
+            if (ioTo !== undefined) {
+                clearTimeout(ioTo);
+            }
+        })
+        .fail(function(jqxhr, settings, exception) {
+            if (global.cfg.gpsUseCompass) {
+                $('#btnGpsUseCompass').click();
+            }
+            ioTo = setTimeout(loadIO, 10000);
+        });
+}
 
 function connectSensor() {
-    sc = io.connect(global.cfg.sensorDevicePath, {
-        port: global.cfg.sensorDevicePort
+    sc = io.connect(global.cfg.sensorControlerHost, {
+        port: global.cfg.sensorControlerPort
     });
     sc.on('connect', function() {
         global.console.info("sensor connected");
+        setSensorSpeed();
         global.cfg.sensorConnected = true;
     });
     sc.on('disconnect', function() {
@@ -25,58 +45,58 @@ function connectSensor() {
         global.cfg.sensorConnected = false;
     });
     sc.on('cmdEcho', function(echo) {
-        global.console.log(echo);
+        global.console.log("sensor echo:" + u.inspect(echo));
     });
 
     sc.on('sensorData', function(data) {
-        // console.log(u.inspect(data));
-        if (global.cfg.gpsUseCompass) {
-            sensorData = data;
-        }
+        // global.console.log(u.inspect(data));
+        sensorData = data;
     });
 
 }
 
-function setSensorSpeed() {
-    sc.emit("command", {
+function setSensorSpeed(val) {
+    sc.emit("sensorCmd", {
         cmd: "setSpeed",
-        sensorSpeed: global.cfg.sensorSpeed
+        sensorSpeed: (val === undefined) ? global.cfg.imuSensorSpeed : parseInt(val)
     });
 }
 
 function setSensorDevicePath() {
-    sc.emit("command", {
+    sc.emit("sensorCmd", {
         cmd: "setDevicePath",
         devicePath: global.cfg.sensorDevicePath
     });
 }
 
 function startSensor() {
-    sc.emit("command", {
+    sc.emit("sensorCmd", {
         cmd: "start"
     });
 }
 
 function stopSensor() {
-    sc.emit("command", {
+    sc.emit("sensorCmd", {
         cmd: "stop"
     });
 }
 
-function restartSensor() {
-	sc.emit("command", {
-        cmd: "restart"
+function reconnectSensor() {
+    sc.emit("sensorCmd", {
+        cmd: "reconnect"
     });
 }
 
 function calibrateSensor() {
-	sc.emit("command", {
+    sc.emit("sensorCmd", {
         cmd: "calibrate"
     });
 }
 
-function getSensorData() {
-    if (global.cfg.gpsUseCompass) {
+function getSensorData(now) {
+    if (now) {
+        return sensorData;
+    } else if (global.cfg.gpsUseCompass) {
         return sensorData;
     } else {
         return {
