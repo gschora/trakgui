@@ -59,8 +59,17 @@ function autoConnectMonitorRtklib() {
         } catch (e) {}
 
     }
+
+    /** 
+     * FIXME: (node) warning: possible EventEmitter memory leak detected. 11 listeners added. Use emitter.setMaxListeners() to increase limit.
+     *
+     */
+
     // because on reload of page it looses connection, therefore i have to reconnect the eventhandlers
     if (global.pageReloaded) {
+        //FIXME:   fix for event emitter memory leak???????
+        global.chkMonitorRtklibSocket.removeAllListeners('data').removeAllListeners('error');
+        
         addMonitorRtklibEventHandlers();
         global.pageReloaded = false;
     }
@@ -73,7 +82,7 @@ function autoConnectMonitorRtklib() {
 function addMonitorRtklibEventHandlers() {
     global.chkMonitorRtklibSocket.on('data', function(data) {
         // global.console.log('monitor');
-        processRtklibData(data);    //processor.js
+        processRtklibData(data); //processor.js
     });
 
     global.chkMonitorRtklibSocket.on('error', function() {

@@ -326,6 +326,7 @@ var calSide = 0;
 var calTimeOut;
 
 function setupDialogSensorCalibration() {
+    //FIXME:   check if sensor is reachable and connected before opening the dialog
     $('#dialogSensorCalibration').dialog({
         autoOpen: false,
         modal: true,

@@ -303,6 +303,7 @@ function setHomeCenter() {
 }
 
 function getRealCoords(originPoint, x_tilt, y_tilt, antennaHeight, compass_angle) {
+    //TODO:   setting on settings page for using drivelineangle not compass-angle
     var x_dist = calcAngleDist(x_tilt - global.cfg.imuAccelCalX, antennaHeight);
     var y_dist = calcAngleDist(y_tilt - global.cfg.imuAccelCalY, antennaHeight);
     var destPoint = originPoint.clone();
@@ -320,15 +321,15 @@ function calcAngleDist(angle, height) {
 
 function moveCompassLine(destPoint, angle) {
     // global.console.log("a: "+angle);
-    movePoint(global.mapFeatures.line_compass.components[0], destPoint, global.cfg.compassLineLength);
-    movePoint(global.mapFeatures.line_compass.components[1], destPoint, -global.cfg.compassLineLength);
+    moveCompassPoint(global.mapFeatures.line_compass.components[0], destPoint, global.cfg.compassLineLength);
+    moveCompassPoint(global.mapFeatures.line_compass.components[1], destPoint, -global.cfg.compassLineLength);
 
     global.mapFeatures.line_compass.rotate(360 - angle, global.mapFeatures.line_compass.getCentroid(true));
     global.mapLayers.vector_compass.redraw();
 
 }
 
-function movePoint(sourcePoint, destPoint, length) {
+function moveCompassPoint(sourcePoint, destPoint, length) {
     // global.console.log("length: "+length);
     sourcePoint.x = destPoint.x;
     sourcePoint.y = destPoint.y + length;
@@ -456,20 +457,9 @@ function setDriveLine(line) {
 }
 
 /**
- *#################################################################################################################################
- *#################################################################################################################################
- *#################################################################################################################################
- *
- * undbeding TODO:
- * check ob ich distanceTo oder getGeodesic length verwenden muss für die Position und den Anbstand zur driveline, weil wenn ich
- * mit distanceTo von den helperpoints zu dem endpunkt der driveline messe bekomme ich unterschiedliche längen!!!!
- * d.h. die helperpoints sind verschoben?????????
- *
- *#################################################################################################################################
- *#################################################################################################################################
- * #################################################################################################################################
+ * just helper function to test if the distances between helperpoints and driveline-endpoints are all the same
+ * to see if the helperpoints are really on the same location on each side of the driveline
  */
-
 function drivelineRect() {
     var p1 = new OpenLayers.Geometry.Point(global.mapFeatures.point_helpPointLeft.x, global.mapFeatures.point_helpPointLeft.y);
     var p2 = new OpenLayers.Geometry.Point(global.mapFeatures.point_helpPointRight.x, global.mapFeatures.point_helpPointRight.y);
