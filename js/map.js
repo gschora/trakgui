@@ -485,32 +485,13 @@ function drivelineRect() {
 }
 
 
-
 /**
- * checks if the distance from the helper-points is the same to the edge-points of the driveline
- * to see if the points are really
- * @return {[type]} [description]
+ * checks on which side of the driveline a point is. this is important for hydraulics
+ * @param  {OpenLayers.Geometry.Point} positionPoint [the point to test]
+ * @return {int}               [side of point to driveline 0=left, 1=right, 2=middle] //FIXME:   check if integer to side is right
  */
-
-function checkDistance() {
-    var driveLineP1 = new OpenLayers.Geometry.Point(global.mapFeatures.line_driveLine.components[0].x, global.mapFeatures.line_driveLine.components[0].y);
-    var driveLineP2 = new OpenLayers.Geometry.Point(global.mapFeatures.line_driveLine.components[1].x, global.mapFeatures.line_driveLine.components[1].y);
-
-    var distDiffA = global.mapFeatures.point_helpPointLeft.distanceTo(driveLineP1) - global.mapFeatures.point_helpPointRight.distanceTo(driveLineP1);
-    var distDiffB = global.mapFeatures.point_helpPointLeft.distanceTo(driveLineP2) - global.mapFeatures.point_helpPointRight.distanceTo(driveLineP2);
-    var lineAA = new OpenLayers.Geometry.LineString([global.mapFeatures.point_helpPointLeft, driveLineP1]);
-    var lineAB = new OpenLayers.Geometry.LineString([global.mapFeatures.point_helpPointRight, driveLineP1]);
-    var lineBA = new OpenLayers.Geometry.LineString([global.mapFeatures.point_helpPointLeft, driveLineP2]);
-    var lineBB = new OpenLayers.Geometry.LineString([global.mapFeatures.point_helpPointRight, driveLineP2]);
-
-    var distA = lineAA.getGeodesicLength('EPSG:31287') - lineAB.getGeodesicLength('EPSG:31287');
-    var distB = lineBA.getGeodesicLength('EPSG:31287') - lineBB.getGeodesicLength('EPSG:31287');
-
-    global.console.log("diff: " + distDiffA + "|" + distDiffB + "||geo: " + distA + "|" + distB);
-}
-
 function getDriveLineSide(positionPoint) {
-
+//FIXME:   use distance.to, not geodesicLength!
     if (global.mapFeatures.point_helpPointLeft !== undefined && global.mapFeatures.point_helpPointRight !== undefined) {
         var distLineLeft = new OpenLayers.Geometry.LineString([global.mapFeatures.point_helpPointLeft, positionPoint]);
         var distLineRight = new OpenLayers.Geometry.LineString([global.mapFeatures.point_helpPointRight, positionPoint]);

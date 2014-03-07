@@ -5,6 +5,11 @@ setStartStopBtnRtklib();
 setRtklibIconColor();
 autoConnectMonitorRtklib();
 
+/** 
+ * TODO: convert this to the socket controler, so rtklib can run on another computer
+ * x use socket.io for the commands
+ */
+
 /**
  * checks if rtklib is running, tcp-server is started and
  * sets global.cfg.rtklibStatus if connected

@@ -58,7 +58,17 @@ function setupCfg() {
     if (localStorage.sensorControlerPort === undefined) localStorage.sensorControlerPort = 8010; // /dev/serial/by-id/usb-FTDI_USB_Serial_Converter_FTFVL144-if00-port0
     global.cfg.sensorControlerPort = localStorage.sensorControlerPort;
     if (localStorage.imuSensorSpeed === undefined) localStorage.imuSensorSpeed = 500;
-    global.cfg.imuSensorSpeed = parseInt(localStorage.imuSensorSpeed);
+    global.cfg.imuSensorSpeed = parseInt(localStorage.imuSensorSpeed); 
+    if (localStorage.ctrlEnableEcho === undefined) localStorage.ctrlEnableEcho = true;
+    global.cfg.ctrlEnableEcho = JSON.parse(localStorage.ctrlEnableEcho);
+
+    if (localStorage.hydroSpeed === undefined) localStorage.hydroSpeed = 500;
+    global.cfg.hydroSpeed = parseInt(localStorage.hydroSpeed);
+    if (localStorage.hydroDuration === undefined) localStorage.hydroDuration = 200;
+    global.cfg.hydroDuration = parseInt(localStorage.hydroDuration);
+    if (localStorage.hydroDevicePath === undefined) localStorage.hydroDevicePath = "/dev/serial/by-id/usb-Silicon_Labs_CP2102_USB_to_UART_Bridge_Controller_01286-if00-port0";
+    global.cfg.hydroDevicePath = localStorage.hydroDevicePath;
+
 
 
     if (localStorage.gpsUseCompass === undefined) localStorage.gpsUseCompass = true;
@@ -123,11 +133,13 @@ function autoReloadPage() {
  * a                    switch active driveline left
  * s                    switch active driveline right
  * z                    toggle auto center
+ * o                    hydroDuration up 100ms
+ * l                    hydroDuration down 100ms
  */
 
 function setupKeyBindings() {
     global.window.onkeypress = function(key) {
-        global.console.log(key);
+        // global.console.log(key);
 
         if (key.ctrlKey) {
             switch (key.charCode) {
@@ -160,8 +172,14 @@ function setupKeyBindings() {
                 case 5: // ctrl + shift + e
                     if (key.shiftKey) $('#btnGpsEndPoint').click();
                     break;
-                case 15: // ctrl + shift + o
+                case 21: // ctrl + shift + u
                     if (key.shiftKey) $('#btnGpsUseCompass').click();
+                    break;
+                case 15: // ctrl+o hydroSpeed up
+                    $('#txtHydroSpeed').spinner('stepUp', 1);
+                    break;
+                case 12: // ctrl+l hydroSpeed down
+                    $('#txtHydroSpeed').spinner('stepDown', 1);
                     break;
             }
 
@@ -178,6 +196,12 @@ function setupKeyBindings() {
                     break;
                 case 122: //z toggle autocenter
                     $('#btnToogleMapAutoCenter').click();
+                    break;
+                case 111: // o hydroduration up
+                    $('#txtHydroDuration').spinner('stepUp', 1);
+                    break;
+                case 108: // l hydroduration down
+                    $('#txtHydroDuration').spinner('stepDown', 1);
                     break;
             }
         }

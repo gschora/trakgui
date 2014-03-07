@@ -1,3 +1,11 @@
+/** 
+ * TODO: make settings as module
+ *     x eg. load hydro.js and automatically add settings tab with all settings for hydro
+ *     x hydro.js has all buttons, txtfields and adds them via jquery
+ */
+
+
+
 (function() {
     setupGuiElements();
     global.win.on('resize', setPositionOnResize);
@@ -32,7 +40,7 @@ function setupGuiElements() {
     setupBtnActiveDriveLineDelete();
     setupbtnGpsStartPoint();
     setupbtnGpsEndPoint();
-    setupDialogSensorCalibration();
+    setupBtnHydro();
 
     setupSettingsAccordion();
 }
@@ -174,11 +182,13 @@ function setupBtnGpsUseCompass() {
                 $('#btnGpsUseCompass').removeClass("ui-state-active");
                 global.mapLayers.vector_compass.setVisibility(false);
                 global.cfg.gpsUseCompass = false;
+                stopSensor();
             } else {
                 if (typeof io !== "undefined" && sc.socket.connected) {
                     $('#btnGpsUseCompass').addClass("ui-state-active");
                     global.mapLayers.vector_compass.setVisibility(true);
                     global.cfg.gpsUseCompass = true;
+                    startSensor();
                 }
             }
         }
@@ -218,6 +228,18 @@ function setupBtnActiveDriveLineDelete() {
     });
 }
 
+function setupBtnHydro() {
+    $('#btnHydroSingleLeft').click(function() {
+        hydroSteerSingleLeft();
+    });
+    $('#btnHydroSingleRight').click(function() {
+        hydroSteerSingleRight();
+    });
+    $('#btnHydroStop').click(function() {
+        hydroSteerStop();
+    });
+}
+
 /**
  * ----------------------------------------------------------------------------
  * settings page
@@ -231,11 +253,32 @@ function setupSettingsAccordion() {
         saveSettingsTabProgs();
         saveSettingsTabOptions();
         saveSettingsTabSensor();
+        saveSettingsTabHydro();
     });
 
+    if (global.cfg.ctrlEnableEcho) {
+        $('#btnEnableEcho').addClass("ui-state-active");
+    } else {
+        $('#btnEnableEcho').removeClass("ui-state-active");
+    }
+    $('#btnEnableEcho').click(function() {
+        if (global.cfg.ctrlEnableEcho) {
+            $('#btnEnableEcho').removeClass("ui-state-active");
+            localStorage.ctrlEnableEcho = global.cfg.ctrlEnableEcho = false;
+            setEnableEcho(false);
+        } else {
+            $('#btnEnableEcho').addClass("ui-state-active");
+            localStorage.ctrlEnableEcho = global.cfg.ctrlEnableEcho = true;
+            setEnableEcho(true);
+        }
+
+    });
     setupSettingsTabPrograms();
     setupSettingsTabOptions();
     setupSettingsTabSensor();
+    setupDialogSensorCalibration();
+    setupSettingsTabHydro();
+
 
 }
 
@@ -261,6 +304,45 @@ function setupSettingsTabOptions() {
     $('#txtDriveLineSpacing').val(global.cfg.driveLineSpacing);
 }
 
+function setupSettingsTabHydro() {
+    $('#txtHydroSpeed').attr("title", "up:o down:l");
+    $('#txtHydroSpeed').spinner({
+        incremental: false,
+        min: 100,
+        step: 100,
+        change: function() {
+            localStorage.hydroSpeed = global.cfg.hydroSpeed = parseInt($('#txtHydroSpeed').val());
+            $('#statusHeader_hydroSpeed').html(global.cfg.hydroSpeed);
+        }
+    });
+    $('#txtHydroSpeed').val(parseInt(global.cfg.hydroSpeed));
+    $('#statusHeader_hydroSpeed').html(parseInt(global.cfg.hydroSpeed));
+
+
+
+    $('#txtHydroDuration').attr("title", "up:strg+o down:strg+l");
+    $('#txtHydroDuration').spinner({
+        incremental: false,
+        min: 100,
+        step: 100,
+        change: function() {
+            localStorage.hydroDuration = global.cfg.hydroDuration = parseInt($('#txtHydroDuration').val());
+            $('#statusHeader_hydroDuration').html(global.cfg.hydroDuration);
+        }
+    });
+    $('#txtHydroDuration').val(parseInt(global.cfg.hydroDuration));
+    $('#statusHeader_hydroDuration').html(parseInt(global.cfg.hydroDuration));
+
+    $('#txtHydroDevicePath').val(global.cfg.hydroDevicePath);
+    $('#btnSetHydroDevicePath').click(function() {
+        localStorage.hydroDevicePath = global.cfg.hydroDevicePath = $('#txtHydroDevicePath').val();
+        hydroSetDevicePath();
+    });
+
+
+
+}
+
 function setupSettingsTabSensor() {
     $('#btnCfgStartSensor').click(function() {
         if (btnSensorDataState) {
@@ -284,6 +366,11 @@ function setupSettingsTabSensor() {
                 settingsInfo("sensor NOT connected!!!");
             }
         }
+    });
+
+    $('#btnSetSensorDevicePath').click(function() {
+        localStorage.sensorDevicePath = global.cfg.sensorDevicePath = $('#txtSensorDevicePath').val();
+        setSensorDevicePath();
     });
 
     $('#btnCfgResetSensor').click(function() {
@@ -440,6 +527,10 @@ function saveSettingsTabSensor() {
     settingsInfo("all sensor settings saved...");
 }
 
+function saveSettingsTabHydro() {
+    localStorage.hydroDevicePath = global.cfg.hydroDevicePath = $('#txtHydroDevicePath').val();
+    settingsInfo("all hydro settings saved...");
+}
 
 
 function settingsInfo(infoText, msgType) {
@@ -454,8 +545,12 @@ var sensorTimer;
 function updateTxtImu() {
     var sensorData = getSensorData(true);
     // global.console.log(sensorData.x_tilt+":"+(sensorData.x_tilt-global.cfg.imuAccelCalX)+"|"+sensorData.y_tilt+":"+(sensorData.y_tilt-global.cfg.imuAccelCalY));
-    $('#txtImuAccelCalX').html(sensorData.x_tilt);
-    $('#txtImuAccelCalY').html(sensorData.y_tilt);
+    $('#txtImuAccelCalX').html((sensorData.x_tilt - global.cfg.imuAccelCalX).toFixed(1));
+    $('#txtRealImuAccelCalX').html(sensorData.x_tilt.toFixed(1));
+
+    $('#txtImuAccelCalY').html((sensorData.y_tilt - global.cfg.imuAccelCalY).toFixed(1));
+    $('#txtRealImuAccelCalY').html(sensorData.y_tilt.toFixed(1));
+
     $('#txtImuCompassAngle').html(sensorData.angle_compass);
     $('#txtImuCompassPitch').html(sensorData.pitch_compass);
     $('#txtImuCompassRoll').html(sensorData.roll_compass);

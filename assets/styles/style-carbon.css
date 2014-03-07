@@ -119,3 +119,9 @@ mein zeugs
     height: 4vh;
     text-align: center;
 }
+.ui-spinner{
+    width:8%;
+}
+.ui-spinner-input{
+    width:60%;
+}
