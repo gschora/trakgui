@@ -71,12 +71,12 @@
                 <div>
                     <span>lowPass:</span>
                     <span id="statusHeader_lowPass">0</span>
-                    <span>mm</span>
+                    <span>cm</span>
                 </div>
                 <div>
                     <span>hiPass:</span>
                     <span id="statusHeader_highPass">0</span>
-                    <span>mm</span>
+                    <span>cm</span>
                 </div>
                 <div>
                     <span>sat:</span>
@@ -131,6 +131,39 @@
             <button id="btnSaveSettings">save all</button>
             <button class='btnSettings' id="btnEnableEcho">echo</button>
             <div id="settingsPage">
+                <h3>options</h3>
+                <div>
+                    <div>
+                        <h3>Map</h3>
+                        <span>use Compass:</span>
+                        <input type="checkbox" id="chkUseCompass">
+                        <span>Compass Line Length:</span>
+                        <input type="text" class="txtLength" id="txtCompassLineLength">
+                        <br>
+                        <span>Map autoCenter on Start:</span>
+                        <input type="checkbox" id="chkMapAutoCenter">
+                        <span>Map show WMS on Start:</span>
+                        <input type="checkbox" id="chkShowWmsLayer">
+                        <br>
+                        <span>Driveline move spacing:</span>
+                        <input type="text" class="txtLength" id="txtDriveLineMoveSpacing">
+                        <span>mm</span>
+                        <br>
+                        <span>Driveline spacing:</span>
+                        <input type="text" class="txtSpacing" id="txtDriveLineSpacing">
+                        <span>cm</span>
+                        <div>
+                            <span>lowPass:</span>
+                            <input id="txtLowPass" type="text" readonly>
+                            <span>cm</span>
+                        </div>
+                        <div>
+                            <span>highPass:</span>
+                            <input id="txtHighPass" type="text" readonly>
+                            <span>cm</span>
+                        </div>
+                    </div>
+                </div>
                 <h3>hydraulic</h3>
                 <div>
                     <h3>hydraulic</h3>
@@ -214,29 +247,6 @@
                                 <span>sec</span>
                             </div>
                         </div>
-                    </div>
-                </div>
-                <h3>options</h3>
-                <div>
-                    <div>
-                        <h3>Map</h3>
-                        <span>use Compass:</span>
-                        <input type="checkbox" id="chkUseCompass">
-                        <span>Compass Line Length:</span>
-                        <input type="text" class="txtLength" id="txtCompassLineLength">
-                        <br>
-                        <span>Map autoCenter on Start:</span>
-                        <input type="checkbox" id="chkMapAutoCenter">
-                        <span>Map show WMS on Start:</span>
-                        <input type="checkbox" id="chkShowWmsLayer">
-                        <br>
-                        <span>Driveline move spacing:</span>
-                        <input type="text" class="txtLength" id="txtDriveLineMoveSpacing">
-                        <span>mm</span>
-                        <br>
-                        <span>Driveline spacing:</span>
-                        <input type="text" class="txtSpacing" id="txtDriveLineSpacing">
-                        <span>cm</span>
                     </div>
                 </div>
                 <h3>programs</h3>

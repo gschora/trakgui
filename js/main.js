@@ -71,6 +71,12 @@ function setupCfg() {
     if (localStorage.hydroAutoSteer === undefined) localStorage.hydroAutoSteer = false;
     global.cfg.hydroAutoSteer = JSON.parse(localStorage.hydroAutoSteer);
 
+    if (localStorage.gpsLowPass === undefined) localStorage.gpsLowPass = 1;
+    global.cfg.gpsLowPass = parseInt(localStorage.gpsLowPass);
+    if (localStorage.gpsHighPass === undefined) localStorage.gpsHighPass = 20;
+    global.cfg.gpsHighPass = parseInt(localStorage.gpsHighPass);
+    
+
 
 
     if (localStorage.gpsUseCompass === undefined) localStorage.gpsUseCompass = true;
@@ -174,10 +180,10 @@ function setupKeyBindings() {
                     }
                     break;
                 case 2: // ctrl + b move driveline left
-                    moveDriveLineLeft((key.shiftKey) ? 100 : 1); //if shift move faster
+                    moveDriveLineLeft((key.shiftKey) ? 500 : 200); //if shift move faster
                     break;
                 case 14: // ctrl + n move driveline right
-                    moveDriveLineRight((key.shiftKey) ? 100 : 1);
+                    moveDriveLineRight((key.shiftKey) ? 500 : 200);
                     break;
                 case 23: // ctrl + shift + w
                     if (key.shiftKey) $('#btnGpsStartPoint').click();
@@ -230,6 +236,18 @@ function setupKeyBindings() {
                     break;
                 case 48: //0 hydro stop
                     $('#btnHydroStop').click();
+                    break;
+                case 90: // shift + z lowPass up
+                    if(key.shiftKey)$('#txtLowPass').spinner('stepUp', 1);
+                    break;
+                case 72: // shift + h lowPass down
+                    if(key.shiftKey)$('#txtLowPass').spinner('stepDown', 1);
+                    break;
+                case 85: // shift + u highPass up
+                    if(key.shiftKey)$('#txtHighPass').spinner('stepUp', 1);
+                    break;
+                case 74: // shift + j highPass down
+                    if(key.shiftKey)$('#txtHighPass').spinner('stepDown', 1);
                     break;
             }
         }

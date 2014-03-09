@@ -325,6 +325,32 @@ function setupSettingsTabOptions() {
     $('#chkShowWmsLayer').prop('checked', global.cfg.mapShowWMSLayer);
     $('#txtDriveLineMoveSpacing').val(global.cfg.driveLineMoveSpacing);
     $('#txtDriveLineSpacing').val(global.cfg.driveLineSpacing);
+
+    $('#txtLowPass').val(global.cfg.gpsLowPass);
+    $('#statusHeader_lowPass').html(global.cfg.gpsLowPass);
+    $('#txtLowPass').attr("title", "up:shift+z down:shift+h");
+    $('#txtLowPass').spinner({
+        incremental: false,
+        min: 1,
+        step: 1,
+        change: function() {
+            localStorage.gpsLowPass = global.cfg.gpsLowPass = parseInt($('#txtLowPass').val());
+            $('#statusHeader_lowPass').html(global.cfg.gpsLowPass);
+        }
+    });
+
+    $('#txtHighPass').val(global.cfg.gpsHighPass);
+    $('#statusHeader_highPass').html(global.cfg.gpsHighPass);
+    $('#txtHighPass').attr("title", "up:shift+u down:shift+j");
+    $('#txtHighPass').spinner({
+        incremental: false,
+        min: 20,
+        step: 1,
+        change: function() {
+            localStorage.gpsHighPass = global.cfg.gpsHighPass = parseInt($('#txtHighPass').val());
+            $('#statusHeader_highPass').html(global.cfg.gpsHighPass);
+        }
+    });
 }
 
 function setupSettingsTabHydro() {
