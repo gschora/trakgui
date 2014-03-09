@@ -576,6 +576,19 @@ function moveDriveLineRight(factor) {
     }
 }
 
+function changeLengthDriveLine(length) {
+    var angle = getDriveLineAngle(global.mapFeatures.line_driveLine);
+    var oldLine = global.mapFeatures.line_driveLine.clone();
+    // move points
+    global.mapFeatures.line_driveLine.components[0].move(length, 0);
+    global.mapFeatures.line_driveLine.components[1].move(length, 0);
+    // rotate the points with rotating center of the old points 
+    global.mapFeatures.line_driveLine.components[0].rotate(-angle-90, oldLine.components[0]);
+    global.mapFeatures.line_driveLine.components[1].rotate(-angle+90, oldLine.components[1]);
+    global.mapLayers.vector_driveLine.redraw();
+
+}
+
 function switchDriveLineLeft() {
     switch (global.cfg.driveLineListSide) {
         case 0:

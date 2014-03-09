@@ -136,6 +136,8 @@ function autoReloadPage() {
  * 
  * a                    switch active driveline left
  * s                    switch active driveline right
+ * t                    make driveline longer
+ * g                    make driveline shorter
  *
  * ctrl + shift + w     set driveLine startpoint gps
  * ctrl + shift + e     set driveLine endpoint gps
@@ -156,12 +158,12 @@ function autoReloadPage() {
 
 function setupKeyBindings() {
     global.window.onkeypress = function(key) {
-        var keyStr = "";
-        if(key.ctrlKey) keyStr += "strg + ";
-        if(key.shiftKey) keyStr += "shift + ";
-        keyStr += String.fromCharCode(key.keyCode)+"|";
-        keyStr += key.charCode;
-        global.console.log(keyStr);
+        // var keyStr = "";
+        // if(key.ctrlKey) keyStr += "strg + ";
+        // if(key.shiftKey) keyStr += "shift + ";
+        // keyStr += String.fromCharCode(key.keyCode)+"|";
+        // keyStr += key.charCode;
+        // global.console.log(keyStr);
 
         if (key.ctrlKey) {
             switch (key.charCode) {
@@ -236,6 +238,12 @@ function setupKeyBindings() {
                     break;
                 case 48: //0 hydro stop
                     $('#btnHydroStop').click();
+                    break;
+                case 116: //t make driveline longer
+                    changeLengthDriveLine(10);
+                    break;
+                case 103: //g make driveline shorter
+                    changeLengthDriveLine(-10);
                     break;
                 case 90: // shift + z lowPass up
                     if(key.shiftKey)$('#txtLowPass').spinner('stepUp', 1);
