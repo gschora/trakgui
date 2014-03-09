@@ -68,6 +68,8 @@ function setupCfg() {
     global.cfg.hydroDuration = parseInt(localStorage.hydroDuration);
     if (localStorage.hydroDevicePath === undefined) localStorage.hydroDevicePath = "/dev/serial/by-id/usb-Silicon_Labs_CP2102_USB_to_UART_Bridge_Controller_01286-if00-port0";
     global.cfg.hydroDevicePath = localStorage.hydroDevicePath;
+    if (localStorage.hydroAutoSteer === undefined) localStorage.hydroAutoSteer = false;
+    global.cfg.hydroAutoSteer = JSON.parse(localStorage.hydroAutoSteer);
 
 
 
@@ -116,30 +118,44 @@ function autoReloadPage() {
 
 /**
  * sets up keybindings for control over keyboard
- * @return nothing
  *
  * ctrl + r             reload page
  * ctrl + shift + r     reload application
- * ctrl + k             toggle kiosk mode
  * ctrl + d             open devtool
+ *
  * ctrl + b             move driveline left fast
  * ctrl + shift + b     move driveline left slow
  * ctrl + n             move driveline right fast
  * ctrl + shift + n     move driveline right slow
- * ctrl + shift + w     set driveLine startpoint gps
- * ctrl + shift + e     set driveLine endpoint gps
- * ctrl + shift + o     toogle compass
- * m                    toggle showMap wms
+ * 
  * a                    switch active driveline left
  * s                    switch active driveline right
- * z                    toggle auto center
+ *
+ * ctrl + shift + w     set driveLine startpoint gps
+ * ctrl + shift + e     set driveLine endpoint gps
+ *
  * o                    hydroDuration up 100ms
  * l                    hydroDuration down 100ms
+ * 
+ * 0                    singleSteer stop
+ * 9                    singleSteer right
+ * 8                    singleSteer left
+ *
+ * 5                    autoSteer
+ * 4                    toggle kiosk mode
+ * 3                    toogle compass
+ * 2                    toggle showMap wms
+ * 1                    toggle auto center
  */
 
 function setupKeyBindings() {
     global.window.onkeypress = function(key) {
-        // global.console.log(key);
+        var keyStr = "";
+        if(key.ctrlKey) keyStr += "strg + ";
+        if(key.shiftKey) keyStr += "shift + ";
+        keyStr += String.fromCharCode(key.keyCode)+"|";
+        keyStr += key.charCode;
+        global.console.log(keyStr);
 
         if (key.ctrlKey) {
             switch (key.charCode) {
@@ -149,9 +165,6 @@ function setupKeyBindings() {
                     } else {
                         global.win.reload();
                     }
-                    break;
-                case 11: // ctrl + k toogle kiosk mode
-                    global.win.toggleKioskMode();
                     break;
                 case 4: // ctrl + d open/close dev-tools
                     if (global.win.isDevToolsOpen()) {
@@ -172,9 +185,6 @@ function setupKeyBindings() {
                 case 5: // ctrl + shift + e
                     if (key.shiftKey) $('#btnGpsEndPoint').click();
                     break;
-                case 21: // ctrl + shift + u
-                    if (key.shiftKey) $('#btnGpsUseCompass').click();
-                    break;
                 case 15: // ctrl+o hydroSpeed up
                     $('#txtHydroSpeed').spinner('stepUp', 1);
                     break;
@@ -188,13 +198,13 @@ function setupKeyBindings() {
                 case 97: // a switch active driveline left
                     switchDriveLineLeft();
                     break;
-                case 109: // m toggle show wms map
+                case 50: // 2 toggle show wms map
                     $('#btnToogleMapShowWMS').click();
                     break;
                 case 115: //s switch active driveline right
                     switchDriveLineRight();
                     break;
-                case 122: //z toggle autocenter
+                case 49: //1 toggle autocenter
                     $('#btnToogleMapAutoCenter').click();
                     break;
                 case 111: // o hydroduration up
@@ -202,6 +212,24 @@ function setupKeyBindings() {
                     break;
                 case 108: // l hydroduration down
                     $('#txtHydroDuration').spinner('stepDown', 1);
+                    break;
+                case 51: // 3 toggle compass
+                    $('#btnGpsUseCompass').click();
+                    break;
+                case 52: //4 toggle kiosk mode
+                    global.win.toggleKioskMode();
+                    break;
+                case 53: //5 toggle autoSteer
+                    $('#btnHydroAutoSteer').click();
+                    break;
+                case 56: //8 singleSteer left
+                    $('#btnHydroSingleLeft').click();
+                    break;
+                case 57: //9 singleSteer right
+                    $('#btnHydroSingleRight').click();
+                    break;
+                case 48: //0 hydro stop
+                    $('#btnHydroStop').click();
                     break;
             }
         }

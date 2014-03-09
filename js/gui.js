@@ -126,10 +126,10 @@ function setupBtnToogleMapAutoCenter() {
     $('#btnToogleMapAutoCenter').click(function() {
             if (global.cfg.mapAutoCenter) {
                 $('#btnToogleMapAutoCenter').removeClass("ui-state-active");
-                global.cfg.mapAutoCenter = false;
+                localStorage.mapAutoCenter = global.cfg.mapAutoCenter = false;
             } else {
                 $('#btnToogleMapAutoCenter').addClass("ui-state-active");
-                global.cfg.mapAutoCenter = true;
+                localStorage.mapAutoCenter = global.cfg.mapAutoCenter = true;
             }
 
         }
@@ -152,11 +152,11 @@ function setupBtnToogleMapShowWMS() {
             if (global.mapLayers.wms.visibility) {
                 $('#btnToogleMapShowWMS').removeClass("ui-state-active");
                 global.mapLayers.wms.setVisibility(false);
-                global.cfg.mapShowWMSLayer = false;
+                localStorage.mapShowWMSLayer = global.cfg.mapShowWMSLayer = false;
             } else {
                 $('#btnToogleMapShowWMS').addClass("ui-state-active");
                 global.mapLayers.wms.setVisibility(true);
-                global.cfg.mapShowWMSLayer = true;
+                localStorage.mapShowWMSLayer = global.cfg.mapShowWMSLayer = true;
             }
 
         }
@@ -181,13 +181,13 @@ function setupBtnGpsUseCompass() {
             if (global.cfg.gpsUseCompass) {
                 $('#btnGpsUseCompass').removeClass("ui-state-active");
                 global.mapLayers.vector_compass.setVisibility(false);
-                global.cfg.gpsUseCompass = false;
+                localStorage.gpsUseCompass = global.cfg.gpsUseCompass = false;
                 stopSensor();
             } else {
                 if (typeof io !== "undefined" && sc.socket.connected) {
                     $('#btnGpsUseCompass').addClass("ui-state-active");
                     global.mapLayers.vector_compass.setVisibility(true);
-                    global.cfg.gpsUseCompass = true;
+                    localStorage.gpsUseCompass = global.cfg.gpsUseCompass = true;
                     startSensor();
                 }
             }
@@ -202,8 +202,10 @@ function setupBtnSetDriveLineManual() {
         var featureCtrl = global.map.getControlsBy("displayClass", "olControlDrawFeature")[0];
         if (!featureCtrl.active || featureCtrl === null) {
             featureCtrl.activate();
+            $('#btnDriveLineManual').addClass("ui-state-active");
         } else {
             featureCtrl.deactivate();
+            $('#btnDriveLineManual').removeClass("ui-state-active");
         }
     });
 }
@@ -211,6 +213,7 @@ function setupBtnSetDriveLineManual() {
 function setupbtnGpsStartPoint() {
     $('#btnGpsStartPoint').click(function() {
         setDriveLineStartGPS();
+        if (global.cfg.hydroAutoSteer) $('#btnHydroAutoSteer').click();
     });
 
 }
@@ -236,7 +239,27 @@ function setupBtnHydro() {
         hydroSteerSingleRight();
     });
     $('#btnHydroStop').click(function() {
+        if (global.cfg.hydroAutoSteer) $('#btnHydroAutoSteer').click();
         hydroSteerStop();
+    });
+
+    if (global.cfg.hydroAutoSteer) {
+        $('#btnHydroAutoSteer').addClass("ui-state-active");
+    } else {
+        $('#btnHydroAutoSteer').removeClass("ui-state-active");
+    }
+
+    $('#btnHydroAutoSteer').click(function() {
+        if (global.cfg.hydroAutoSteer) {
+            $('#btnHydroAutoSteer').removeClass("ui-state-active");
+            hydroStopAutoSteer();
+            localStorage.hydroAutoSteer = global.cfg.hydroAutoSteer = false;
+
+        } else {
+            $('#btnHydroAutoSteer').addClass("ui-state-active");
+            hydroStartAutoSteer();
+            localStorage.hydroAutoSteer = global.cfg.hydroAutoSteer = true;
+        }
     });
 }
 

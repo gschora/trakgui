@@ -1,10 +1,10 @@
-function hydroInitRelais() {
-    sc.emit("hydroCmd", {
-        cmd: "init",
-        hydroSpeed: global.cfg.hydroSpeed,
-        hydroDuration: global.cfg.hydroDuration
-    });
-}
+// function hydroInitRelais() {
+//     sc.emit("hydroCmd", {
+//         cmd: "init",
+//         hydroSpeed: global.cfg.hydroSpeed,
+//         hydroDuration: global.cfg.hydroDuration
+//     });
+// }
 
 function hydroStartAutoSteer() {
     sc.emit("hydroCmd", {
@@ -44,5 +44,14 @@ function hydroSetDevicePath() {
     sc.emit("hydroCmd", {
         cmd: "setDevicePath",
         path: global.cfg.hydroDevicePath
+    });
+}
+
+function hydroSetPointSide(side) {
+    sc.emit("hydroCmd", {
+        cmd: "pointSide",
+        pointSide: side,
+        hydroSpeed: global.cfg.hydroSpeed,
+        hydroDuration: global.cfg.hydroDuration 
     });
 }

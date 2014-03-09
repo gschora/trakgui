@@ -28,6 +28,12 @@ function loadIO() {
             if (ioTo !== undefined) {
                 clearTimeout(ioTo);
             }
+
+            if(global.cfg.hydroAutoSteer){
+                hydroStartAutoSteer();
+            } else {
+                hydroStopAutoSteer();
+            }
         })
         .fail(function(jqxhr, settings, exception) {
             if (global.cfg.gpsUseCompass) {

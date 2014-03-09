@@ -246,7 +246,7 @@ function drawCurrentPosition(pos) {
     if (isNaN(newpoint.x)) {
         global.console.log("newpoint x not valid");
     }
-    if(isNaN(newpoint.y)){
+    if (isNaN(newpoint.y)) {
         global.console.log("newpoint y not valid");
     }
     if (global.cfg.gpsUseCompass) {
@@ -258,16 +258,16 @@ function drawCurrentPosition(pos) {
     global.mapFeatures.line_currentPosition.addPoint(realpoint);
     currentPositionPoint = realpoint;
 
-    if (global.mapFeatures.line_currentPosition.components.length > 10) {
+    if (global.mapFeatures.line_currentPosition.components.length > 1) {
         global.mapFeatures.line_currentPosition.removePoint(global.mapFeatures.line_currentPosition.components[0]);
     }
 
+    if (global.cfg.hydroAutoSteer) hydroSetPointSide(getPointSide(realpoint));
     moveCompassLine(realpoint, pos.angle_compass);
 
     global.mapLayers.vector_pos.redraw();
     updateStatusHeader(pos);
     setMapCenter(realpoint);
-    getDriveLineSide(realpoint);
 }
 
 /**
@@ -316,7 +316,7 @@ function getRealCoords(originPoint, x_tilt, y_tilt, antennaHeight, compass_angle
 
 function calcAngleDist(angle, height) {
     // global.console.log(angle +"|"+height);
-    return (Math.sin(angle * (Math.PI / 180)) * (height/100)); //Math.sin in JS ist in Radian deshalb die Formel mit Math.PI/180 multiplizieren!!!!
+    return (Math.sin(angle * (Math.PI / 180)) * (height / 100)); //Math.sin in JS ist in Radian deshalb die Formel mit Math.PI/180 multiplizieren!!!!
 }
 
 function moveCompassLine(destPoint, angle) {
@@ -367,6 +367,7 @@ function setDriveLineStartGPS() {
         // clear all other features, points, lines
         global.mapLayers.vector_driveLine.removeAllFeatures();
         global.mapFeatures.point_startPoint = currentPositionPoint;
+        global.mapFeatures.point_endPoint = undefined;
         global.mapLayers.vector_driveLine.addFeatures([new OpenLayers.Feature.Vector(global.mapFeatures.point_startPoint)]);
         global.mapLayers.vector_driveLine.redraw();
     }
@@ -460,6 +461,7 @@ function setDriveLine(line) {
  * just helper function to test if the distances between helperpoints and driveline-endpoints are all the same
  * to see if the helperpoints are really on the same location on each side of the driveline
  */
+
 function drivelineRect() {
     var p1 = new OpenLayers.Geometry.Point(global.mapFeatures.point_helpPointLeft.x, global.mapFeatures.point_helpPointLeft.y);
     var p2 = new OpenLayers.Geometry.Point(global.mapFeatures.point_helpPointRight.x, global.mapFeatures.point_helpPointRight.y);
@@ -473,13 +475,13 @@ function drivelineRect() {
     var ls4 = new OpenLayers.Geometry.LineString([p1, p4]);
     var ls5 = new OpenLayers.Geometry.LineString([p4, p2]);
 
-    global.console.log(ls1.getLength().toFixed(5)+"|"+ls2.getLength().toFixed(5)+"|"+ls3.getLength().toFixed(5)+"|"+ls4.getLength().toFixed(5)+"|"+ls5.getLength().toFixed(5));
-    global.console.log(p1.distanceTo(p2).toFixed(5)+"|"+p2.distanceTo(p3).toFixed(5)+"|"+p3.distanceTo(p1).toFixed(5)+"|"+p1.distanceTo(p4).toFixed(5)+"|"+p4.distanceTo(p2).toFixed(5));
+    global.console.log(ls1.getLength().toFixed(5) + "|" + ls2.getLength().toFixed(5) + "|" + ls3.getLength().toFixed(5) + "|" + ls4.getLength().toFixed(5) + "|" + ls5.getLength().toFixed(5));
+    global.console.log(p1.distanceTo(p2).toFixed(5) + "|" + p2.distanceTo(p3).toFixed(5) + "|" + p3.distanceTo(p1).toFixed(5) + "|" + p1.distanceTo(p4).toFixed(5) + "|" + p4.distanceTo(p2).toFixed(5));
 
-    global.console.log("1:"+(p1.distanceTo(p3).toFixed(8)-p2.distanceTo(p3).toFixed(8))+"| 2:"+(p1.distanceTo(p4).toFixed(8)-p2.distanceTo(p4).toFixed(8)));
+    global.console.log("1:" + (p1.distanceTo(p3).toFixed(8) - p2.distanceTo(p3).toFixed(8)) + "| 2:" + (p1.distanceTo(p4).toFixed(8) - p2.distanceTo(p4).toFixed(8)));
     // global.console.log(ls1.getGeodesicLength().toFixed(5)+"|"+ls2.getGeodesicLength().toFixed(5)+"|"+ls3.getGeodesicLength().toFixed(5)+"|"+ls4.getGeodesicLength().toFixed(5)+"|"+ls5.getGeodesicLength().toFixed(5));
 
-    global.mapLayers.vector_driveLine.addFeatures([new OpenLayers.Feature.Vector(ls1),new OpenLayers.Feature.Vector(ls2),new OpenLayers.Feature.Vector(ls3),new OpenLayers.Feature.Vector(ls4),new OpenLayers.Feature.Vector(ls5),]);
+    global.mapLayers.vector_driveLine.addFeatures([new OpenLayers.Feature.Vector(ls1), new OpenLayers.Feature.Vector(ls2), new OpenLayers.Feature.Vector(ls3), new OpenLayers.Feature.Vector(ls4), new OpenLayers.Feature.Vector(ls5), ]);
     global.mapLayers.vector_driveLine.redraw();
 
 }
@@ -490,8 +492,9 @@ function drivelineRect() {
  * @param  {OpenLayers.Geometry.Point} positionPoint [the point to test]
  * @return {int}               [side of point to driveline 0=left, 1=right, 2=middle] //FIXME:   check if integer to side is right
  */
-function getDriveLineSide(positionPoint) {
-//FIXME:   use distance.to, not geodesicLength!
+
+function getPointSide(positionPoint) {
+    //FIXME:   use distance.to, not geodesicLength!
     if (global.mapFeatures.point_helpPointLeft !== undefined && global.mapFeatures.point_helpPointRight !== undefined) {
         var distLineLeft = new OpenLayers.Geometry.LineString([global.mapFeatures.point_helpPointLeft, positionPoint]);
         var distLineRight = new OpenLayers.Geometry.LineString([global.mapFeatures.point_helpPointRight, positionPoint]);
@@ -503,13 +506,13 @@ function getDriveLineSide(positionPoint) {
 
         if (sideDiff > 0) {
             // global.console.log("left");
-            return 0;
+            return 1;
         } else if (sideDiff < 0) {
             // global.console.log("right");
-            return 1;
+            return 2;
         } else {
             // global.console.log("middle");
-            return 2;
+            return 0;
         }
         // global.console.log("dist:" + distLeft + "|" + distRight + "|" + sideDiff);
     }
