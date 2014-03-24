@@ -21,6 +21,8 @@ var sensor = {
 var tilt = false;
 var compass = false;
 
+var debug = true;
+
 process.on('message', function(msg) {
     // console.log("chld: "+u.inspect(msg));
     switch (msg.cmd) {
@@ -39,6 +41,7 @@ process.on('message', function(msg) {
         case "setDevicePath":
             sendCmdEcho("setDevicePath ok");
             sensorDevicePath = msg.devicePath;
+            reconnectSerialPort();
             break;
         case "setSpeed":
             sendCmdEcho("setSpeed ok");
@@ -47,6 +50,10 @@ process.on('message', function(msg) {
         case "calibrate":
             sendCmdEcho("calibrate ok");
             calibrate();
+            break;
+        case "resetCal":
+            sendCmdEcho("reset calibration ok");
+            resetCalibration();
             break;
         case "heartbeat":
             heartbeatTime = Date.now();
@@ -80,15 +87,16 @@ function setupSerialPort() {
 
         sp.on("open", function() {
             sp.write("p");
-            console.info("serialport open...");
+            console.info("sensor serialport open...");
             sendCmdEcho("serialport open...");
             con = true;
         });
 
         sp.on("error", function(data) {
             con = false;
-            console.error("serialport error... " + data);
-            sendCmdEcho("serialport serialport error");
+            console.error("sensor serialport error... " + data);
+            sendCmdEcho("serialport error");
+            reconnectSerialPort();
         });
 
         sp.on("data", function(data) {
@@ -116,7 +124,7 @@ function setupSerialPort() {
 function reconnectSerialPort() {
     if (sp !== undefined) {
         sp.close(function(error) {
-            console.info("serialport closed");
+            console.info("sensor serialport closed");
             sendCmdEcho("reconnect serialport closed");
             con = false;
             setupSerialPort();
@@ -158,7 +166,7 @@ function parseSensorCompass(data) {
 function parseSensorTilt(data) {
     var x_tilt = data[2].split("=")[1] / 10;
     var y_tilt = data[3].split("=")[1] / 10;
-
+//TODO:   calculate x and y offset with antenna height here, not in mapjs
     sensor.x_tilt = parseFloat(x_tilt);
     sensor.y_tilt = parseFloat(y_tilt);
     tilt = true;
@@ -242,18 +250,22 @@ var to;
  */
 
 function countdown() {
-    console.log("sec: " + cd--);
+    console.log("sensor sec: " + cd--);
 
     if (cd < 0) {
         clearTimeout(to);
         cd = 60;
         calSide = 0;
         sendCmdEcho("Timeout!!! please restart calibration!");
-        console.log("Timeout!!! please restart calibration!");
+        console.log("sensor Timeout!!! please restart calibration!");
 
     } else {
         to = setTimeout(countdown, 1000);
     }
+}
+
+function resetCalibration () {
+    sp.write("R");
 }
 
 /**
@@ -275,5 +287,5 @@ setupSerialPort();
 (function main() {
     if (autoSend && con) getSensorData();
 
-    setTimeout(main, sensorSpeed); //damit mache ich eine loop! bei while(true) habe ich 50% Prozessorauslastung!!!
+    setTimeout(main, sensorSpeed+20); //damit mache ich eine loop! bei while(true) habe ich 50% Prozessorauslastung!!!
 })();

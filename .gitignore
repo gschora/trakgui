@@ -13,3 +13,4 @@ tools/rtklib/*.exe
 tools/rtklib/*.htm
 tools/rtklib/*.ini
 js/node_modules/
+js/util/node_modules/
