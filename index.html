@@ -59,24 +59,24 @@
                     <span id="statusHeader_driveLineArea">0</span>
                 </div>
                 <div>
-                    <span>rel:</span>
-                    <span id="statusHeader_relaisSpeed">0</span>
-                    <span>s</span>
+                    <span>hydro:</span>
+                    <span id="statusHeader_hydroSpeed">0</span>
+                    <span>ms</span>
                 </div>
                 <div>
-                    <span>hydro:</span>
-                    <span id="statusHeader_hydro">0</span>
-                    <span>s</span>
+                    <span>dur:</span>
+                    <span id="statusHeader_hydroDuration">0</span>
+                    <span>ms</span>
                 </div>
                 <div>
                     <span>lowPass:</span>
                     <span id="statusHeader_lowPass">0</span>
-                    <span>mm</span>
+                    <span>cm</span>
                 </div>
                 <div>
                     <span>hiPass:</span>
                     <span id="statusHeader_highPass">0</span>
-                    <span>mm</span>
+                    <span>cm</span>
                 </div>
                 <div>
                     <span>sat:</span>
@@ -103,6 +103,10 @@
                 <button id="btnGpsUseCompass" class="footerBtn" title="ctrl+shift+o">compass</button>
                 <button id="btnDriveLineManual" class="footerBtn" title="">man. driveline</button>
                 <!-- <button id="btnActiveDriveLineDelete" class="footerBtn" disabled>delete DriveLine</button> -->
+                <button id="btnHydroAutoSteer" class="footerBtn" title="">autoSteer</button>
+                <button id="btnHydroSingleLeft" class="footerBtn" title="">left</button>
+                <button id="btnHydroSingleRight" class="footerBtn" title="">right</button>
+                <button id="btnHydroStop" class="footerBtn" title="">stop</button>
             </div>
         </article>
         <article id="about">
@@ -125,7 +129,58 @@
             <h1>Settings</h1>
             <div id="settingsAlert" class="settingsAlert ui-state-hover"></div>
             <button id="btnSaveSettings">save all</button>
+            <button class='btnSettings' id="btnEnableEcho">echo</button>
             <div id="settingsPage">
+                <h3>options</h3>
+                <div>
+                    <div>
+                        <h3>Map</h3>
+                        <span>use Compass:</span>
+                        <input type="checkbox" id="chkUseCompass">
+                        <span>Compass Line Length:</span>
+                        <input type="text" class="txtLength" id="txtCompassLineLength">
+                        <br>
+                        <span>Map autoCenter on Start:</span>
+                        <input type="checkbox" id="chkMapAutoCenter">
+                        <span>Map show WMS on Start:</span>
+                        <input type="checkbox" id="chkShowWmsLayer">
+                        <br>
+                        <span>Driveline move spacing:</span>
+                        <input type="text" class="txtLength" id="txtDriveLineMoveSpacing">
+                        <span>mm</span>
+                        <br>
+                        <span>Driveline spacing:</span>
+                        <input type="text" class="txtSpacing" id="txtDriveLineSpacing">
+                        <span>cm</span>
+                        <div>
+                            <span>lowPass:</span>
+                            <input id="txtLowPass" type="text" readonly>
+                            <span>cm</span>
+                        </div>
+                        <div>
+                            <span>highPass:</span>
+                            <input id="txtHighPass" type="text" readonly>
+                            <span>cm</span>
+                        </div>
+                    </div>
+                </div>
+                <h3>hydraulic</h3>
+                <div>
+                    <h3>hydraulic</h3>
+                    <div>
+                        <span>hydro device path:</span>
+                        <input id="txtHydroDevicePath" class="txtPath" type="text">
+                        <button class='btnSettings' id="btnSetHydroDevicePath">set Path</button>
+                    </div>
+                    <div>
+                        <span>hydroSpeed:</span>
+                        <input id="txtHydroSpeed" type="text" readonly>
+                    </div>
+                    <div>
+                        <span>hydroDuration:</span>
+                        <input id="txtHydroDuration" type="text" readonly>
+                    </div>
+                </div>
                 <h3>sensor</h3>
                 <div>
                     <h3>imu</h3>
@@ -140,6 +195,7 @@
                         <div>
                             <span>sensor device path:</span>
                             <input id="txtSensorDevicePath" class="txtPath" type="text">
+                            <button class='btnSettings' id="btnSetSensorDevicePath">set Path</button>
                         </div>
                         <div>
                             <span>sensor speed:</span>
@@ -155,8 +211,12 @@
                     <div style='clear:both'>
                         <div style='float: left'>imu offset X:</div>
                         <div class='txtLine' style='float: left' id='txtImuAccelCalX'>0</div>
+                        <div style='float: left'>real</div>
+                        <div style='float: left' class='txtLine' id='txtRealImuAccelCalX'>0</div>
                         <div style='float: left'>Y:</div>
                         <div class='txtLine' style='float: left' id='txtImuAccelCalY'>0</div>
+                        <div style='float: left'>real</div>
+                        <div style='float: left' class='txtLine' id='txtRealImuAccelCalY'>0</div>
                     </div>
                     <div style='clear:both'>
                         <div style='float: left'>compass pitch:</div>
@@ -187,29 +247,6 @@
                                 <span>sec</span>
                             </div>
                         </div>
-                    </div>
-                </div>
-                <h3>options</h3>
-                <div>
-                    <div>
-                        <h3>Map</h3>
-                        <span>use Compass:</span>
-                        <input type="checkbox" id="chkUseCompass">
-                        <span>Compass Line Length:</span>
-                        <input type="text" class="txtLength" id="txtCompassLineLength">
-                        <br>
-                        <span>Map autoCenter on Start:</span>
-                        <input type="checkbox" id="chkMapAutoCenter">
-                        <span>Map show WMS on Start:</span>
-                        <input type="checkbox" id="chkShowWmsLayer">
-                        <br>
-                        <span>Driveline move spacing:</span>
-                        <input type="text" class="txtLength" id="txtDriveLineMoveSpacing">
-                        <span>mm</span>
-                        <br>
-                        <span>Driveline spacing:</span>
-                        <input type="text" class="txtSpacing" id="txtDriveLineSpacing">
-                        <span>cm</span>
                     </div>
                 </div>
                 <h3>programs</h3>
@@ -246,7 +283,9 @@
     <script src="./js/processor.js"></script>
     <script src="./js/map.js"></script>
     <script src="./js/rtklib.js"></script>
+    <script src="./js/socketControler.js"></script>
     <script src="./js/sensor.js"></script>
+    <script src="./js/hydro.js"></script>
 </body>
 
 </html>
