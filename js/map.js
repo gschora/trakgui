@@ -494,15 +494,18 @@ function drivelineRect() {
  */
 
 function getPointSide(positionPoint) {
-    //FIXME:   use distance.to, not geodesicLength!
     if (global.mapFeatures.point_helpPointLeft !== undefined && global.mapFeatures.point_helpPointRight !== undefined) {
-        var distLineLeft = new OpenLayers.Geometry.LineString([global.mapFeatures.point_helpPointLeft, positionPoint]);
-        var distLineRight = new OpenLayers.Geometry.LineString([global.mapFeatures.point_helpPointRight, positionPoint]);
+        // var distLineLeft = new OpenLayers.Geometry.LineString([global.mapFeatures.point_helpPointLeft, positionPoint]);
+        // var distLineRight = new OpenLayers.Geometry.LineString([global.mapFeatures.point_helpPointRight, positionPoint]);
 
-        var distLeft = distLineLeft.getGeodesicLength('EPSG:31287');
-        var distRight = distLineRight.getGeodesicLength('EPSG:31287');
+        // var distLeft = distLineLeft.getGeodesicLength('EPSG:31287');
+        // var distRight = distLineRight.getGeodesicLength('EPSG:31287');
+
+        var distLeft = positionPoint.distanceTo(global.mapFeatures.point_helpPointLeft).toFixed(10); //IMPORTANT: the toFixed is necessary, because otherwise the difference never would be 0
+        var distRight = positionPoint.distanceTo(global.mapFeatures.point_helpPointRight).toFixed(10);
 
         var sideDiff = distLeft - distRight;
+        // console.log(sideDiff);
 
         if (sideDiff > 0) {
             // global.console.log("left");
@@ -516,6 +519,9 @@ function getPointSide(positionPoint) {
         }
         // global.console.log("dist:" + distLeft + "|" + distRight + "|" + sideDiff);
     }
+}
+function checkeDistanceToDriveLine (positionPoint) {
+    // body...
 }
 
 function getDriveLineAngle(lineString) {
@@ -539,6 +545,11 @@ function getDriveLineAngle(lineString) {
         return angle;
     }
 }
+
+/** 
+ * TODO: add button for move driveline to current gps-position
+ * x check distance between current gps position and driveline and move it there
+ */
 
 function moveDriveLineLeft(factor) {
     var spacing = global.cfg.driveLineMoveSpacing / factor;
@@ -583,8 +594,8 @@ function changeLengthDriveLine(length) {
     global.mapFeatures.line_driveLine.components[0].move(length, 0);
     global.mapFeatures.line_driveLine.components[1].move(length, 0);
     // rotate the points with rotating center of the old points 
-    global.mapFeatures.line_driveLine.components[0].rotate(-angle-90, oldLine.components[0]);
-    global.mapFeatures.line_driveLine.components[1].rotate(-angle+90, oldLine.components[1]);
+    global.mapFeatures.line_driveLine.components[0].rotate(-angle - 90, oldLine.components[0]);
+    global.mapFeatures.line_driveLine.components[1].rotate(-angle + 90, oldLine.components[1]);
     global.mapLayers.vector_driveLine.redraw();
 
 }
@@ -875,6 +886,7 @@ function getDriveLineArea() {
         ring.addComponent(new OpenLayers.Geometry.Point(p2.x, p2.y));
     }
     var area = ring.getGeodesicArea(new OpenLayers.Projection("EPSG:31287"));
+    //FIXME:   area will not be shown in status-header!!!
     if (area >= 10000) {
         $('#statusHeader_driveLineArea').html((area / 10000).toFixed(3) + " ha");
     } else {
