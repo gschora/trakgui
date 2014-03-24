@@ -14,3 +14,6 @@ tools/rtklib/*.htm
 tools/rtklib/*.ini
 js/node_modules/
 js/util/node_modules/
+tools/mapproxy/bin/
+tools/mapproxy/lib/
+tools/mapproxy/mymapproxyconfig/austria_map_2014/
