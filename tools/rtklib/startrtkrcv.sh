@@ -2,6 +2,6 @@
 
 echo "starting rtkrcv..."
 
-/usr/bin/screen -S rtkrcv -d -m /home/hannes/projects/2014/myGitProjects/trakgui/tools/rtklib/rtkrcv -s -p 20200 -m 20300 -o pflanzen2014.conf
+/usr/bin/screen -S rtkrcv -d -m ./tools/rtklib/rtkrcv -s -p 52002 -m 52001 -o ./tools/rtklib/pflanzen2014.conf
 
 exit 0

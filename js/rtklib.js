@@ -72,7 +72,7 @@ function autoConnectMonitorRtklib() {
 
     // because on reload of page it looses connection, therefore i have to reconnect the eventhandlers
     if (global.pageReloaded) {
-        //FIXME:   fix for event emitter memory leak???????
+        //FIXME:   is this the fix for event emitter memory leak??????? testing required
         global.chkMonitorRtklibSocket.removeAllListeners('data').removeAllListeners('error');
         
         addMonitorRtklibEventHandlers();
@@ -181,7 +181,8 @@ function setRtklibIconColor() {
 
     if (global.childRtklib === undefined) {
         global.cfg.rtklibStatus = 0;
-        startRtklib();
+        //TODO:   fix starting rtkrcv per this file (exits always with code 255), so workaround for now is startscript with controler.js
+        // startRtklib();
     } else {
         global.cfg.rtklibStatus = 1;
     }
