@@ -45,7 +45,7 @@ var hydroChild;
 
 function startSensorChild() {
     var fork = require('child_process').fork;
-    sensorChild = fork('./sensorChild');
+    sensorChild = fork('sensorChild');
     sensorChild.on('error', function(e) {
         console.log("sensorchild error " + e);
     });
@@ -72,7 +72,7 @@ function startSensorChild() {
 
 function startHydroChild() {
     var fork = require('child_process').fork;
-    hydroChild = fork('./hydroChild');
+    hydroChild = fork('hydroChild');
     hydroChild.on('error', function(e) {
         console.log("hydroChild error " + e);
     });
