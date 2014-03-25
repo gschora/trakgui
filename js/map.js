@@ -489,10 +489,12 @@ function drivelineRect() {
 
 /**
  * checks on which side of the driveline a point is. this is important for hydraulics
+ * it also looks for highpass and lowpass filter
+ * also has a smoothing filter (running average) included, which can be enabled/disabled
  * @param  {OpenLayers.Geometry.Point} positionPoint [the point to test]
  * @return {int}               [side of point to driveline 0=left, 1=right, 2=middle] //FIXME:   check if integer to side is right
  */
-
+var filterSideDiff = 0;
 function getPointSide(positionPoint) {
     if (global.mapFeatures.point_helpPointLeft !== undefined && global.mapFeatures.point_helpPointRight !== undefined) {
         // var distLineLeft = new OpenLayers.Geometry.LineString([global.mapFeatures.point_helpPointLeft, positionPoint]);
@@ -505,12 +507,21 @@ function getPointSide(positionPoint) {
         var distRight = positionPoint.distanceTo(global.mapFeatures.point_helpPointRight).toFixed(10);
 
         var sideDiff = distLeft - distRight;
-        // console.log(sideDiff);
 
-        if (sideDiff > 0) {
+        filterSideDiff= global.cfg.distanceFilterVal * filterSideDiff+(1-global.cfg.distanceFilterVal)*sideDiff;
+
+        // console.log(sideDiff+" "+filterSideDiff);
+
+        if (global.cfg.useFilter){
+            sideDiff = filterSideDiff;
+        }
+        // console.log(sideDiff+" "+filterSideDiff);
+
+
+        if (sideDiff > (global.cfg.gpsLowPass/100) && sideDiff < (global.cfg.gpsHighPass/100)) {
             // global.console.log("left");
             return 1;
-        } else if (sideDiff < 0) {
+        } else if (sideDiff < (-global.cfg.gpsLowPass/100) && sideDiff > (-global.cfg.gpsHighPass/100)) {
             // global.console.log("right");
             return 2;
         } else {

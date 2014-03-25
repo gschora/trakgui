@@ -48,7 +48,7 @@ function hydroSetDevicePath() {
 }
 
 function hydroSetPointSide(side) {
-    global.console.log("side: "+side);
+    // global.console.log("side: "+side);
     sc.emit("hydroCmd", {
         cmd: "pointSide",
         pointSide: side,

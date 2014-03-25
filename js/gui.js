@@ -351,6 +351,22 @@ function setupSettingsTabOptions() {
             $('#statusHeader_highPass').html(global.cfg.gpsHighPass);
         }
     });
+
+
+    $('#chkUseFilter').prop('checked', global.cfg.useFilter);
+    $('#chkUseFilter').change(function() {
+        localStorage.useFilter = global.cfg.useFilter = $('#chkUseFilter').prop('checked');
+    });
+    $('#txtFilter').val(global.cfg.distanceFilterVal);
+    $('#txtFilter').spinner({
+        incremental: false,
+        min: 0.1,
+        max: 0.9,
+        step: 0.1,
+        change: function() {
+            localStorage.distanceFilterVal = global.cfg.distanceFilterVal = parseFloat($('#txtFilter').val());
+        }
+    });
 }
 
 function setupSettingsTabHydro() {

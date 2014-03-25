@@ -75,6 +75,11 @@ function setupCfg() {
     global.cfg.gpsLowPass = parseInt(localStorage.gpsLowPass);
     if (localStorage.gpsHighPass === undefined) localStorage.gpsHighPass = 20;
     global.cfg.gpsHighPass = parseInt(localStorage.gpsHighPass);
+
+    if(localStorage.distanceFilterVal === undefined) localStorage.distanceFilterVal = 0.1;
+    global.cfg.distanceFilterVal = parseFloat(localStorage.distanceFilterVal);
+    if(localStorage.useFilter === undefined) localStorage.useFilter = false;
+    global.cfg.useFilter = JSON.parse(localStorage.useFilter);
     
 
 
